@@ -2057,38 +2057,81 @@
             
             if (!message) return;
             
-            // Clear input
-            input.value = '';
-            
             // Add user message
             addMessage('user', message);
+            input.value = '';
             
             // Show loading
-            const loadingId = addMessage('ai', 'Thinking...', 'SYSTEM', true);
+            const loadingId = addMessage('ai', 'Connecting to AIs...', 'SYSTEM', true);
             
             try {
-                // Call backend
+                // Call backend with timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+                
                 const response = await fetch('https://jade-received-montreal-titans.trycloudflare.com/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: message })
+                    body: JSON.stringify({ content: message }),
+                    signal: controller.signal
                 });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
                 
                 const data = await response.json();
                 
                 // Remove loading
                 document.getElementById(loadingId).remove();
                 
+                // Validate response
+                if (!data.ai_responses || data.ai_responses.length === 0) {
+                    throw new Error('No AI responses received');
+                }
+                
                 // Add AI responses
-                data.ai_responses.forEach(aiResp => {
-                    addMessage('ai', aiResp.content, aiResp.ai.toUpperCase());
+                data.ai_responses.forEach((aiResp, index) => {
+                    setTimeout(() => {
+                        addMessage('ai', aiResp.content, aiResp.ai.toUpperCase());
+                    }, index * 300); // Stagger responses for better UX
                 });
                 
             } catch (error) {
                 console.error('Chat error:', error);
                 document.getElementById(loadingId).remove();
-                addMessage('ai', '❌ Error: Backend connection failed. Please try again.', 'SYSTEM');
+                
+                // Detailed error message
+                let errorMsg = '❌ Connection failed. ';
+                if (error.name === 'AbortError') {
+                    errorMsg += 'Request timed out (30s). Backend might be sleeping.';
+                } else if (error.message.includes('HTTP 429')) {
+                    errorMsg += 'Rate limit reached. Wait 1 minute.';
+                } else if (error.message.includes('HTTP 500')) {
+                    errorMsg += 'Backend error. Try a simpler question.';
+                } else {
+                    errorMsg += 'Check if backend is running. Try again in a moment.';
+                }
+                
+                addMessage('ai', errorMsg, 'SYSTEM');
+                
+                // Add retry button
+                const messagesDiv = document.getElementById('chat-messages');
+                const retryBtn = document.createElement('button');
+                retryBtn.className = 'btn btn-secondary';
+                retryBtn.style.margin = '10px auto';
+                retryBtn.style.display = 'block';
+                retryBtn.textContent = '🔄 Retry';
+                retryBtn.onclick = () => {
+                    input.value = message;
+                    retryBtn.remove();
+                    sendMessage();
+                };
+                messagesDiv.appendChild(retryBtn);
             }
+        }
         }
 
         function addMessage(type, content, aiName = '', isLoading = false) {
