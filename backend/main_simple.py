@@ -150,22 +150,32 @@ async def chat(request: ChatRequest):
             selected_ais = smart_router.select_ais(request.content, available_ais)
             intent_analysis = None  # SmartRouter does analysis internally
         
-        # Get responses from selected AIs
+        # Get responses from selected AIs (SEQUENTIAL COLLABORATION!)
         ai_responses = []
+        conversation_history = [user_msg]  # Build shared context
         
         for ai_id in selected_ais:
             try:
-                # Call AI
+                # Call AI with FULL conversation history (including previous AI responses)
                 response = await llm_router.chat(
-                    messages=[user_msg],
+                    messages=conversation_history,
                     preferred_provider=ai_id
                 )
                 
-                ai_responses.append(AIResponse(
+                # Create AI response object
+                ai_response = AIResponse(
                     ai=ai_id,
                     content=response,
                     timestamp=datetime.now().isoformat()
-                ))
+                )
+                ai_responses.append(ai_response)
+                
+                # ADD THIS AI'S RESPONSE TO HISTORY (so next AI sees it!)
+                conversation_history.append({
+                    "role": "assistant",
+                    "content": f"[{ai_id.upper()}]: {response}",
+                    "timestamp": datetime.now().isoformat()
+                })
                 
             except Exception as e:
                 # If one AI fails, continue with others
