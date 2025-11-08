@@ -1142,9 +1142,9 @@
                             <img src="chika-mascot.svg" alt="CHIKA" style="width: 32px; height: 32px;">
                             <h3 style="margin: 0; font-size: 1.25rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Live AI Collaboration</h3>
                         </div>
-                        <span style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: var(--chika-accent); font-weight: 600;">
-                            <span style="width: 8px; height: 8px; background: var(--chika-accent); border-radius: 50%; animation: pulse 2s infinite;"></span>
-                            Real-time
+                        <span id="status-badge" style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #f59e0b; font-weight: 600;">
+                            <span id="status-dot" style="width: 8px; height: 8px; background: #f59e0b; border-radius: 50%; animation: pulse 2s infinite;"></span>
+                            <span id="status-text">Checking...</span>
                         </span>
                     </div>
                 </div>
@@ -2373,38 +2373,71 @@
 </body>
 </html>
 
-    <!-- Health Check on Load -->
+    <!-- Dynamic Backend Status Checker -->
     <script>
-        // Check backend health on page load
+        let backendStatus = 'checking'; // checking, online, offline
+        
+        // Update status badge UI
+        function updateStatusBadge(status) {
+            const badge = document.getElementById('status-badge');
+            const dot = document.getElementById('status-dot');
+            const text = document.getElementById('status-text');
+            
+            if (!badge || !dot || !text) return;
+            
+            if (status === 'online') {
+                badge.style.color = '#10b981';
+                dot.style.background = '#10b981';
+                text.textContent = 'Live';
+            } else if (status === 'offline') {
+                badge.style.color = '#ef4444';
+                dot.style.background = '#ef4444';
+                text.textContent = 'Offline';
+                dot.style.animation = 'none';
+            } else {
+                badge.style.color = '#f59e0b';
+                dot.style.background = '#f59e0b';
+                text.textContent = 'Checking...';
+            }
+        }
+        
+        // Check backend health
         async function checkBackendHealth() {
             try {
                 const response = await fetch('https://jade-received-montreal-titans.trycloudflare.com/health', {
                     method: 'GET',
-                    signal: AbortSignal.timeout(5000)
+                    signal: AbortSignal.timeout(3000)
                 });
                 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('✅ Backend healthy:', data.available_ais);
-                    
-                    // Update pre-header with live status
-                    const betaBadge = document.querySelector('.beta-badge');
-                    if (betaBadge) {
-                        betaBadge.innerHTML = '✅ Live Demo Ready • Beta Dec 2025';
-                    }
+                    console.log('✅ Backend online:', data.available_ais);
+                    backendStatus = 'online';
+                    updateStatusBadge('online');
+                    return true;
                 } else {
-                    console.warn('⚠️ Backend returned', response.status);
+                    console.warn('⚠️ Backend error:', response.status);
+                    backendStatus = 'offline';
+                    updateStatusBadge('offline');
+                    return false;
                 }
             } catch (error) {
-                console.warn('⚠️ Backend offline (demo will use fallback)');
-                // Don't show error to user - they'll see it when they try
+                console.warn('❌ Backend offline:', error.message);
+                backendStatus = 'offline';
+                updateStatusBadge('offline');
+                return false;
             }
         }
         
         // Check on load
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', checkBackendHealth);
+            document.addEventListener('DOMContentLoaded', () => {
+                checkBackendHealth();
+                // Re-check every 10 seconds
+                setInterval(checkBackendHealth, 10000);
+            });
         } else {
             checkBackendHealth();
+            setInterval(checkBackendHealth, 10000);
         }
     </script>
