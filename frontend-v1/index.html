@@ -1,234 +1,885 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chika - Stop Switching Between AIs</title>
-    <link rel="stylesheet" href="../design-system/chika-design.css">
+    
+    <!-- SEO Meta Tags -->
+    <title>CHIKA - Stop Switching Between AIs. Let Them Work Together.</title>
+    <meta name="description" content="One question. Multiple AI models collaborating. Claude, GPT-4, and Gemini working together with unlimited context. Join the beta waitlist.">
+    <meta name="keywords" content="AI collaboration, multi-AI, ChatGPT alternative, Claude alternative, AI chat, developer tools">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ruipedro-pinheiro.github.io/multi-ai-system/frontend-v1/">
+    <meta property="og:title" content="CHIKA - Stop Switching Between AIs">
+    <meta property="og:description" content="Let Claude, GPT-4, and Gemini collaborate on your tasks. One interface, unlimited AI power.">
+    <meta property="og:image" content="https://ruipedro-pinheiro.github.io/multi-ai-system/frontend-v1/og-image.png">
+    
+    <!-- Twitter Card -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://ruipedro-pinheiro.github.io/multi-ai-system/frontend-v1/">
+    <meta property="twitter:title" content="CHIKA - Stop Switching Between AIs">
+    <meta property="twitter:description" content="Let Claude, GPT-4, and Gemini collaborate on your tasks.">
+    <meta property="twitter:image" content="https://ruipedro-pinheiro.github.io/multi-ai-system/frontend-v1/og-image.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇨🇭</text></svg>">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* V1 Specific Styles */
+        /* ==================== ROOT VARIABLES ==================== */
         :root {
-            --primary: #00D9FF;
-            --bg-dark: #0a0e1a;
-            --card-bg: #1a1f35;
-            --text: #e8eaed;
+            /* Colors */
+            --chika-primary: #6366f1;
+            --chika-secondary: #8b5cf6;
+            --chika-accent: #10b981;
+            --chika-warning: #f59e0b;
+            --chika-error: #ef4444;
+            
+            /* Backgrounds */
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --bg-input: #0f172a;
+            
+            /* Text */
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --gradient-cta: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-hero: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 70%);
+            
+            /* Spacing */
+            --space-xs: 8px;
+            --space-sm: 16px;
+            --space-md: 24px;
+            --space-lg: 48px;
+            --space-xl: 96px;
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.3);
         }
-
-        body {
-            background: var(--bg-dark);
-            color: var(--text);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        
+        /* ==================== RESET & BASE ==================== */
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-
-        /* Hero Section */
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* ==================== TYPOGRAPHY ==================== */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: var(--space-md);
+        }
+        
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+        }
+        
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+        }
+        
+        h3 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+        }
+        
+        p {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        
+        a {
+            color: var(--chika-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        a:hover {
+            color: var(--chika-secondary);
+        }
+        
+        /* ==================== UTILITIES ==================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+        
+        .container-wide {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+        
+        .section {
+            padding: var(--space-xl) 0;
+        }
+        
+        .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        /* ==================== PRE-HEADER (Sticky Bar) ==================== */
+        .pre-header {
+            background: rgba(99, 102, 241, 0.1);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            padding: var(--space-sm) 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .pre-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .beta-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: var(--gradient-primary);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .waitlist-count {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        
+        .waitlist-count strong {
+            color: var(--chika-accent);
+            font-weight: 700;
+        }
+        
+        /* ==================== BUTTONS ==================== */
+        .btn {
+            display: inline-block;
+            padding: 16px 32px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--gradient-cta);
+            color: white;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--chika-primary);
+            border: 2px solid var(--chika-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .btn-large {
+            padding: 20px 48px;
+            font-size: 1.25rem;
+        }
+        
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 0.875rem;
+        }
+        
+        /* ==================== HERO SECTION ==================== */
         .hero {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
             text-align: center;
-            background: radial-gradient(circle at 50% 0%, rgba(0, 217, 255, 0.1), transparent 50%);
+            padding: var(--space-xl) var(--space-md);
+            background: var(--gradient-hero);
+            position: relative;
+            overflow: hidden;
         }
-
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            transform: translateX(-50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.5; transform: translateX(-50%) scale(1.1); }
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+        
+        .logo-large {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .logo-icon {
+            font-size: 5rem;
+            margin-bottom: var(--space-sm);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
         .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin: 0 0 1rem 0;
-            background: linear-gradient(135deg, var(--primary), #fff);
+            margin-bottom: var(--space-md);
+            line-height: 1.1;
+        }
+        
+        .hero .tagline {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-lg);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .demo-preview {
+            width: 100%;
+            max-width: 900px;
+            height: 500px;
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            margin: var(--space-lg) 0;
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        
+        .demo-preview::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+            animation: rotate 8s linear infinite;
+        }
+        
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+        
+        .demo-placeholder {
+            position: relative;
+            z-index: 1;
+            font-size: 3rem;
+            opacity: 0.5;
+        }
+        
+        .cta-container {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: var(--space-lg) 0;
+        }
+        
+        .hero-footer {
+            margin-top: var(--space-lg);
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        
+        .hero-footer strong {
+            color: var(--chika-accent);
+        }
+        
+        /* ==================== SOCIAL PROOF BAR ==================== */
+        .social-proof {
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: var(--space-lg) 0;
+        }
+        
+        .social-proof-content {
+            text-align: center;
+        }
+        
+        .social-proof-title {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .social-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--space-lg);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-md);
+        }
+        
+        .social-logo {
+            font-size: 2rem;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+        
+        .social-logo:hover {
+            opacity: 1;
+        }
+        
+        .github-stars {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: rgba(99, 102, 241, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            margin-top: var(--space-md);
+        }
+        
+        /* ==================== PROBLEM SECTION ==================== */
+        .problem-section {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, rgba(239, 68, 68, 0.05) 100%);
+        }
+        
+        .problem-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+        
+        .problem-card {
+            background: var(--bg-card);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            border-left: 4px solid var(--chika-error);
+            transition: transform 0.3s ease;
+        }
+        
+        .problem-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .problem-card h3 {
+            color: var(--chika-error);
+            font-size: 1.5rem;
+            margin-bottom: var(--space-md);
+        }
+        
+        .problem-card p {
+            color: var(--text-secondary);
+        }
+        
+        .problem-conclusion {
+            text-align: center;
+            margin-top: var(--space-xl);
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--chika-error), var(--chika-warning));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
-        .hero .tagline {
-            font-size: 1.5rem;
-            color: #9aa0a6;
-            margin: 0 0 2rem 0;
-            max-width: 600px;
+        
+        /* ==================== SOLUTION SECTION ==================== */
+        .solution-section {
+            background: var(--bg-dark);
         }
-
-        .demo-preview {
-            width: 100%;
+        
+        .solution-intro {
+            text-align: center;
             max-width: 800px;
-            height: 400px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            margin: 2rem 0;
-            box-shadow: 0 20px 60px rgba(0, 217, 255, 0.3);
+            margin: 0 auto var(--space-xl);
+        }
+        
+        .solution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+        
+        .solution-card {
+            background: var(--bg-card);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            border-left: 4px solid var(--chika-accent);
+            transition: all 0.3s ease;
+        }
+        
+        .solution-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+        }
+        
+        .solution-icon {
+            font-size: 3rem;
+            margin-bottom: var(--space-md);
+        }
+        
+        .solution-card h3 {
+            color: var(--chika-accent);
+            font-size: 1.5rem;
+            margin-bottom: var(--space-md);
+        }
+        
+        /* ==================== HOW IT WORKS ==================== */
+        .how-it-works {
+            background: rgba(99, 102, 241, 0.02);
+        }
+        
+        .steps-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .step {
+            display: flex;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            opacity: 0.6;
+            font-size: 1.5rem;
+            font-weight: 800;
         }
-
-        .cta-container {
-            display: flex;
-            gap: 1rem;
-            margin: 2rem 0;
+        
+        .step-content {
+            flex: 1;
         }
-
-        .btn {
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
+        
+        .step-title {
+            font-size: 1.75rem;
+            margin-bottom: var(--space-md);
+        }
+        
+        .step-visual {
+            background: var(--bg-card);
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+            margin-top: var(--space-md);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        
+        .ai-bubble {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--chika-primary);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .ai-name {
             font-weight: 600;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
+            color: var(--chika-primary);
+            margin-bottom: var(--space-xs);
         }
-
-        .btn-primary {
-            background: var(--primary);
-            color: #000;
+        
+        /* ==================== COMPARISON TABLE ==================== */
+        .comparison-section {
+            background: var(--bg-dark);
         }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.4);
+        
+        .comparison-table {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid rgba(99, 102, 241, 0.2);
         }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(0, 217, 255, 0.1);
-        }
-
-        /* Problem Section */
-        .section {
-            padding: 4rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .problem-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .problem-card {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            border-left: 4px solid #ff4444;
-        }
-
-        .problem-card h3 {
-            color: #ff4444;
-            margin-top: 0;
-        }
-
-        /* Solution Section */
-        .solution-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .solution-card {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            border-left: 4px solid var(--primary);
-        }
-
-        .solution-card h3 {
-            color: var(--primary);
-            margin-top: 0;
-        }
-
-        /* Comparison Table */
-        .comparison {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 2rem;
-            margin: 3rem 0;
-            overflow-x: auto;
-        }
-
+        
         table {
             width: 100%;
             border-collapse: collapse;
         }
-
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
+        
         th {
-            background: rgba(0, 217, 255, 0.1);
-            color: var(--primary);
+            background: var(--gradient-primary);
+            color: white;
+            padding: var(--space-md);
+            font-weight: 700;
+            text-align: left;
+        }
+        
+        td {
+            padding: var(--space-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .chika-column {
+            background: rgba(16, 185, 129, 0.05);
+            border-left: 2px solid var(--chika-accent);
             font-weight: 600;
         }
-
+        
         .checkmark {
-            color: #4ade80;
-            font-size: 1.2rem;
+            color: var(--chika-accent);
+            font-size: 1.25rem;
         }
-
+        
         .xmark {
-            color: #ff4444;
-            font-size: 1.2rem;
+            color: var(--chika-error);
+            font-size: 1.25rem;
         }
-
-        /* Waitlist Section */
-        .waitlist {
-            background: linear-gradient(135deg, var(--card-bg), rgba(0, 217, 255, 0.05));
-            padding: 4rem 2rem;
-            margin: 4rem 0;
+        
+        .partial {
+            color: var(--chika-warning);
+            font-size: 1.25rem;
+        }
+        
+        /* ==================== PRICING ==================== */
+        .pricing-section {
+            background: rgba(99, 102, 241, 0.02);
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+        
+        .pricing-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 2px solid rgba(99, 102, 241, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--chika-primary);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--chika-accent);
+            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.2);
+        }
+        
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--gradient-cta);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .pricing-title {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: var(--space-md) 0;
+        }
+        
+        .pricing-price small {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin: var(--space-lg) 0;
+        }
+        
+        .pricing-features li {
+            padding: var(--space-sm) 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--chika-accent);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .pricing-cta {
+            width: 100%;
+            margin-top: var(--space-lg);
+        }
+        
+        .pricing-note {
+            text-align: center;
+            margin-top: var(--space-xl);
+            padding: var(--space-lg);
+            background: rgba(99, 102, 241, 0.05);
+            border-radius: var(--radius-md);
+        }
+        
+        /* ==================== WAITLIST SECTION ==================== */
+        .waitlist-section {
+            background: linear-gradient(135deg, var(--bg-card), rgba(99, 102, 241, 0.05));
+            padding: var(--space-xl) 0;
+        }
+        
+        .waitlist-content {
+            max-width: 700px;
+            margin: 0 auto;
             text-align: center;
         }
-
+        
         .waitlist-form {
-            max-width: 500px;
-            margin: 2rem auto;
             display: flex;
-            gap: 1rem;
+            gap: var(--space-md);
+            margin: var(--space-lg) 0;
         }
-
-        .waitlist-form input {
+        
+        .waitlist-input {
             flex: 1;
-            padding: 1rem;
-            font-size: 1rem;
-            background: var(--bg-dark);
-            border: 2px solid rgba(0, 217, 255, 0.3);
-            border-radius: 8px;
-            color: var(--text);
+            padding: var(--space-md);
+            font-size: 1.125rem;
+            background: var(--bg-input);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            transition: border-color 0.3s ease;
         }
-
-        .waitlist-form input:focus {
+        
+        .waitlist-input:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--chika-primary);
         }
-
+        
         .waitlist-stats {
-            margin-top: 2rem;
-            color: #9aa0a6;
-            font-size: 0.9rem;
+            margin-top: var(--space-lg);
+            color: var(--text-muted);
         }
-
-        /* Chat Demo */
+        
+        .waitlist-stats strong {
+            color: var(--chika-accent);
+            font-size: 2rem;
+            display: block;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .waitlist-benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+        
+        .benefit {
+            padding: var(--space-md);
+            background: rgba(16, 185, 129, 0.05);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+        }
+        
+        /* ==================== FAQ ==================== */
+        .faq-section {
+            background: var(--bg-dark);
+        }
+        
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            overflow: hidden;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+        
+        .faq-question {
+            padding: var(--space-lg);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.125rem;
+            transition: background 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .faq-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 var(--space-lg);
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 var(--space-lg) var(--space-lg);
+        }
+        
+        /* ==================== FOOTER ==================== */
+        .footer {
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(99, 102, 241, 0.1);
+            padding: var(--space-xl) 0 var(--space-lg);
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .footer-column h4 {
+            font-size: 1rem;
+            margin-bottom: var(--space-md);
+            color: var(--chika-primary);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: var(--space-sm);
+        }
+        
+        .footer-links a {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: var(--space-lg);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        
+        /* ==================== LIVE DEMO MODAL ==================== */
         #chat-demo {
             display: none;
             position: fixed;
@@ -236,298 +887,862 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            padding: 2rem;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            padding: var(--space-md);
         }
-
+        
         #chat-demo.active {
             display: flex;
             align-items: center;
             justify-content: center;
         }
-
+        
         .chat-container {
             width: 100%;
-            max-width: 900px;
-            height: 80vh;
-            background: var(--card-bg);
-            border-radius: 12px;
+            max-width: 1000px;
+            height: 85vh;
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
             display: flex;
             flex-direction: column;
             position: relative;
+            border: 2px solid var(--chika-primary);
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.5);
         }
-
+        
         .chat-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: var(--space-lg);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: rgba(99, 102, 241, 0.05);
         }
-
+        
         .chat-close {
             background: none;
             border: none;
-            color: var(--text);
-            font-size: 1.5rem;
+            color: var(--text-primary);
+            font-size: 2rem;
             cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
         }
-
+        
+        .chat-close:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--chika-error);
+        }
+        
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 2rem;
+            padding: var(--space-lg);
         }
-
+        
         .message {
-            margin-bottom: 1.5rem;
+            margin-bottom: var(--space-lg);
+            animation: fadeIn 0.3s ease;
         }
-
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         .message.user {
             text-align: right;
         }
-
+        
         .message-content {
             display: inline-block;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            max-width: 70%;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            max-width: 80%;
         }
-
+        
         .message.user .message-content {
-            background: var(--primary);
-            color: #000;
+            background: var(--gradient-cta);
+            color: white;
         }
-
+        
         .message.ai .message-content {
-            background: rgba(255,255,255,0.05);
-            border-left: 3px solid var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 3px solid var(--chika-primary);
+            text-align: left;
         }
-
+        
         .message.ai .ai-name {
-            font-size: 0.8rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--chika-primary);
+            margin-bottom: var(--space-xs);
+            font-weight: 700;
+            text-transform: uppercase;
         }
-
+        
         .chat-input-container {
-            padding: 1.5rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: var(--space-lg);
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
             display: flex;
-            gap: 1rem;
+            gap: var(--space-md);
+            background: rgba(99, 102, 241, 0.02);
         }
-
+        
         .chat-input {
             flex: 1;
-            padding: 1rem;
-            background: var(--bg-dark);
-            border: 2px solid rgba(0, 217, 255, 0.3);
-            border-radius: 8px;
-            color: var(--text);
+            padding: var(--space-md);
+            background: var(--bg-input);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
             font-size: 1rem;
         }
-
+        
         .chat-input:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--chika-primary);
         }
-
+        
         .chat-send {
-            padding: 1rem 2rem;
-            background: var(--primary);
+            padding: var(--space-md) var(--space-lg);
+            background: var(--gradient-cta);
             border: none;
-            border-radius: 8px;
-            color: #000;
+            border-radius: var(--radius-md);
+            color: white;
             font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
-
+        
         .chat-send:hover {
-            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
         }
-
+        
         .loading {
             opacity: 0.6;
             animation: pulse 1.5s infinite;
         }
-
+        
         @keyframes pulse {
             0%, 100% { opacity: 0.6; }
             50% { opacity: 1; }
         }
-
+        
+        /* ==================== RESPONSIVE ==================== */
         @media (max-width: 768px) {
-            .hero h1 {
+            :root {
+                --space-xl: 48px;
+            }
+            
+            h1 {
                 font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.75rem;
+            }
+            
+            .pre-header-content {
+                flex-direction: column;
+                text-align: center;
             }
             
             .cta-container {
                 flex-direction: column;
             }
-
+            
+            .btn {
+                width: 100%;
+            }
+            
             .waitlist-form {
                 flex-direction: column;
             }
+            
+            .step {
+                flex-direction: column;
+            }
+            
+            .comparison-table {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 600px;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ==================== SCROLL ANIMATIONS ==================== */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
 <body>
-    <!-- Hero Section -->
+    <!-- ==================== PRE-HEADER ==================== -->
+    <div class="pre-header">
+        <div class="container">
+            <div class="pre-header-content">
+                <div class="beta-badge">
+                    🔥 Beta launching December 2025
+                </div>
+                <div class="waitlist-count">
+                    <strong id="header-count">0</strong> on the waitlist • Be the first!
+                </div>
+                <a href="#waitlist" class="btn btn-small btn-primary">Join Waitlist</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== HERO SECTION ==================== -->
     <section class="hero">
-        <div class="logo-large">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">🇨🇭</div>
-            <h1>Stop Switching Between AIs</h1>
-        </div>
-        <p class="tagline">
-            Let Claude, GPT, and Gemini collaborate on your tasks. One interface, unlimited AI power.
-        </p>
-
-        <!-- Demo Preview Placeholder -->
-        <div class="demo-preview">
-            📹 Demo Video Here
-        </div>
-
-        <div class="cta-container">
-            <button class="btn btn-primary" onclick="openChat()">Try Live Demo</button>
-            <a href="#waitlist" class="btn btn-secondary">Join Waitlist</a>
-        </div>
-
-        <div style="margin-top: 2rem; color: #9aa0a6;">
-            ✨ 100% Free during beta • No credit card required
-        </div>
-    </section>
-
-    <!-- Problem Section -->
-    <section class="section">
-        <h2>The Problem</h2>
-        <div class="problem-grid">
-            <div class="problem-card">
-                <h3>❌ Context Switching Hell</h3>
-                <p>Copy-pasting the same context between ChatGPT, Claude, and Gemini wastes hours every week.</p>
+        <div class="hero-content">
+            <div class="logo-large">
+                <div class="logo-icon">🇨🇭</div>
+                <h1>
+                    Stop Switching Between AIs.<br>
+                    <span class="gradient-text">Let Them Work Together.</span>
+                </h1>
             </div>
-            <div class="problem-card">
-                <h3>❌ Fragmented Memory</h3>
-                <p>Each AI forgets your previous conversations. You repeat yourself constantly.</p>
+            
+            <p class="tagline">
+                One question. Multiple AI models collaborating. Unlimited context.<br>
+                The best answer, every time.
+            </p>
+
+            <!-- Demo Video Placeholder -->
+            <div class="demo-preview">
+                <div class="demo-placeholder">📹 Demo Video Coming Soon</div>
             </div>
-            <div class="problem-card">
-                <h3>❌ Tool Overload</h3>
-                <p>Managing 5+ browser tabs and API keys for different AI tools breaks your flow.</p>
+
+            <div class="cta-container">
+                <button class="btn btn-primary btn-large" onclick="openChat()">
+                    Try Live Demo
+                </button>
+                <a href="#waitlist" class="btn btn-secondary btn-large">
+                    Join Beta Waitlist
+                </a>
+            </div>
+
+            <div class="hero-footer">
+                <strong>✨ Free during beta</strong> • Help us validate the market
             </div>
         </div>
     </section>
 
-    <!-- Solution Section -->
-    <section class="section">
-        <h2>The Chika Solution</h2>
-        <div class="solution-grid">
-            <div class="solution-card">
-                <h3>✅ Multi-AI Collaboration</h3>
-                <p>Ask once, get answers from Claude, GPT, and Gemini simultaneously. Let them debate and refine responses.</p>
-            </div>
-            <div class="solution-card">
-                <h3>✅ Shared Memory</h3>
-                <p>All AIs access the same conversation history. No more repeating context.</p>
-            </div>
-            <div class="solution-card">
-                <h3>✅ One Interface</h3>
-                <p>Stop juggling tabs. Everything in one clean, Swiss-made interface.</p>
+    <!-- ==================== SOCIAL PROOF ==================== -->
+    <section class="social-proof">
+        <div class="container">
+            <div class="social-proof-content">
+                <div class="social-proof-title">Built for developers, by developers</div>
+                <div class="social-logos">
+                    <div class="social-logo" title="Open Source">🌐</div>
+                    <div class="social-logo" title="Swiss Made">🇨🇭</div>
+                    <div class="social-logo" title="Privacy First">🔒</div>
+                    <div class="social-logo" title="MIT License">📜</div>
+                </div>
+                <div class="github-stars">
+                    ⭐ <a href="https://github.com/ruipedro-pinheiro/multi-ai-system" target="_blank" style="color: var(--chika-primary);">Star us on GitHub</a>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Comparison Table -->
-    <section class="section">
-        <h2>How Chika Compares</h2>
-        <div class="comparison">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Feature</th>
-                        <th>ChatGPT Plus</th>
-                        <th>Claude Pro</th>
-                        <th>Chika</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Multiple AI models</td>
-                        <td><span class="xmark">✗</span></td>
-                        <td><span class="xmark">✗</span></td>
-                        <td><span class="checkmark">✓</span></td>
-                    </tr>
-                    <tr>
-                        <td>Shared context between AIs</td>
-                        <td><span class="xmark">✗</span></td>
-                        <td><span class="xmark">✗</span></td>
-                        <td><span class="checkmark">✓</span></td>
-                    </tr>
-                    <tr>
-                        <td>AI collaboration</td>
-                        <td><span class="xmark">✗</span></td>
-                        <td><span class="xmark">✗</span></td>
-                        <td><span class="checkmark">✓</span></td>
-                    </tr>
-                    <tr>
-                        <td>Unlimited memory</td>
-                        <td><span class="xmark">✗</span></td>
-                        <td><span class="xmark">✗</span></td>
-                        <td><span class="checkmark">✓</span></td>
-                    </tr>
-                    <tr>
-                        <td>Price (monthly)</td>
-                        <td>$20</td>
-                        <td>$20</td>
-                        <td><strong>Free beta</strong></td>
-                    </tr>
-                </tbody>
-            </table>
+    <!-- ==================== PROBLEM SECTION ==================== -->
+    <section class="section problem-section">
+        <div class="container">
+            <h2 class="problem-title">Sound Familiar?</h2>
+            
+            <div class="problem-grid">
+                <div class="problem-card fade-in">
+                    <h3>😤 Endless Context Switching</h3>
+                    <p>
+                        You ask ChatGPT a question, then Claude for a second opinion, 
+                        then copy-paste the context between them... Over and over again.
+                    </p>
+                </div>
+                
+                <div class="problem-card fade-in">
+                    <h3>😤 Lost Memory</h3>
+                    <p>
+                        Each AI forgets what you just discussed. You repeat yourself constantly. 
+                        "Remember that bug we talked about yesterday?" Nope, it doesn't.
+                    </p>
+                </div>
+                
+                <div class="problem-card fade-in">
+                    <h3>😤 Tool Overload</h3>
+                    <p>
+                        Managing 5+ browser tabs, different API keys, separate conversations. 
+                        Your workflow is completely fragmented.
+                    </p>
+                </div>
+                
+                <div class="problem-card fade-in">
+                    <h3>😤 Wrong AI, Wrong Task</h3>
+                    <p>
+                        You never know which AI is best for your specific question. 
+                        Should I use Claude? GPT-4? Gemini? Time wasted guessing.
+                    </p>
+                </div>
+            </div>
+
+            <div class="problem-conclusion fade-in">
+                What if they could just... work together?
+            </div>
         </div>
     </section>
 
-    <!-- Waitlist Section -->
-    <section id="waitlist" class="waitlist">
-        <h2>Join the Beta Waitlist</h2>
-        <p style="max-width: 600px; margin: 1rem auto; color: #9aa0a6;">
-            Be among the first to experience true multi-AI collaboration. 
-            We're launching in 2 weeks with limited beta spots.
-        </p>
-        
-        <form class="waitlist-form" id="waitlist-form">
-            <input 
-                type="email" 
-                placeholder="your@email.com" 
-                required
-                id="email-input"
-            >
-            <button type="submit" class="btn btn-primary">Join Waitlist</button>
-        </form>
-
-        <div class="waitlist-stats">
-            <strong id="waitlist-count">0</strong> developers already on the list
-        </div>
-
-        <div style="margin-top: 3rem; color: #9aa0a6; font-size: 0.9rem;">
-            🇨🇭 Made in Switzerland • 🔒 Privacy-first • 💯 No spam, ever
+    <!-- ==================== SOLUTION SECTION ==================== -->
+    <section class="section solution-section">
+        <div class="container">
+            <div class="solution-intro">
+                <h2>Introducing <span class="gradient-text">CHIKA</span></h2>
+                <p>
+                    The first platform where AI models truly collaborate. 
+                    No more switching. No more repeating yourself. 
+                    Just ask once, and watch them work together.
+                </p>
+            </div>
+            
+            <div class="solution-grid">
+                <div class="solution-card fade-in">
+                    <div class="solution-icon">🤖</div>
+                    <h3>✅ Multi-AI Collaboration</h3>
+                    <p>
+                        Multiple AIs debate your question, refine each other's ideas, 
+                        and build on their collective knowledge. You get the best answer, 
+                        not just one AI's opinion.
+                    </p>
+                </div>
+                
+                <div class="solution-card fade-in">
+                    <div class="solution-icon">🧠</div>
+                    <h3>✅ Unlimited Memory</h3>
+                    <p>
+                        Never lose context again. CHIKA remembers every conversation, 
+                        across all sessions. Reference discussions from weeks ago instantly.
+                    </p>
+                </div>
+                
+                <div class="solution-card fade-in">
+                    <div class="solution-icon">⚡</div>
+                    <h3>✅ Smart Routing</h3>
+                    <p>
+                        CHIKA analyzes your question and automatically selects the best models. 
+                        GPT-4 for code? Claude for analysis? Gemini for creativity? 
+                        All selected automatically.
+                    </p>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Live Chat Demo Modal -->
+    <!-- ==================== HOW IT WORKS ==================== -->
+    <section class="section how-it-works">
+        <div class="container">
+            <h2 class="text-center">How CHIKA Works</h2>
+            
+            <div class="steps-container">
+                <!-- Step 1 -->
+                <div class="step fade-in">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3 class="step-title">You Ask</h3>
+                        <p>Type your question like you normally would. No special formatting needed.</p>
+                        <div class="step-visual">
+                            <div style="background: rgba(16, 185, 129, 0.1); padding: 16px; border-radius: 8px; border-left: 3px solid var(--chika-accent);">
+                                "Debug this React performance issue with too many re-renders"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step fade-in">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3 class="step-title">AIs Collaborate</h3>
+                        <p>CHIKA automatically selects the best models and they start discussing.</p>
+                        <div class="step-visual">
+                            <div class="ai-bubble">
+                                <div class="ai-name">GPT-4</div>
+                                "Check for unnecessary state updates in useEffect hooks..."
+                            </div>
+                            <div class="ai-bubble">
+                                <div class="ai-name">CLAUDE</div>
+                                "Also review the render patterns. GPT's right, but consider React.memo..."
+                            </div>
+                            <div class="ai-bubble">
+                                <div class="ai-name">GEMINI</div>
+                                "Both valid points. Here's a comprehensive solution combining both approaches..."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step fade-in">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Get Best Answer</h3>
+                        <p>Consensus emerges. You get one refined answer with multiple perspectives.</p>
+                        <div class="step-visual">
+                            <div style="background: rgba(99, 102, 241, 0.1); padding: 16px; border-radius: 8px; border-left: 3px solid var(--chika-primary);">
+                                <strong>Final Answer:</strong><br>
+                                Here's the optimal solution combining all approaches:<br>
+                                1. Use React.memo for expensive components<br>
+                                2. Implement useCallback for event handlers<br>
+                                3. Check for unnecessary useEffect dependencies<br>
+                                [Full detailed code example...]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step fade-in">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Follow-Up with Full Context</h3>
+                        <p>Ask follow-ups. All AIs remember the entire conversation.</p>
+                        <div class="step-visual">
+                            <div style="background: rgba(16, 185, 129, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+                                "What about the component state management?"
+                            </div>
+                            <div style="color: var(--text-muted); font-size: 0.875rem;">
+                                ✅ All 3 AIs remember the React performance discussion and build on it
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== COMPARISON TABLE ==================== -->
+    <section class="section comparison-section">
+        <div class="container">
+            <h2 class="text-center">How CHIKA Compares</h2>
+            
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>ChatGPT Plus</th>
+                            <th>Claude Pro</th>
+                            <th>Continue.dev</th>
+                            <th>Cursor</th>
+                            <th class="chika-column">CHIKA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Multi-AI Collaboration</strong></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td><span class="partial">⚠️</span></td>
+                            <td class="chika-column"><span class="checkmark">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Context Size</strong></td>
+                            <td>128K tokens</td>
+                            <td>200K tokens</td>
+                            <td>Limited</td>
+                            <td>Good</td>
+                            <td class="chika-column"><strong>Unlimited</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Memory Across Sessions</strong></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td><span class="partial">⚠️</span> Per project</td>
+                            <td><span class="xmark">✗</span></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td class="chika-column"><span class="checkmark">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Web Interface</strong></td>
+                            <td><span class="checkmark">✓</span></td>
+                            <td><span class="checkmark">✓</span></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td class="chika-column"><span class="checkmark">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>CLI/Terminal</strong></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td><span class="checkmark">✓</span></td>
+                            <td><span class="partial">⚠️</span></td>
+                            <td class="chika-column">🔜 Q1 2026</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Your API Keys (Privacy)</strong></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td><span class="checkmark">✓</span></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td class="chika-column"><span class="checkmark">✓</span> PRO</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Price/month</strong></td>
+                            <td>$20</td>
+                            <td>$20</td>
+                            <td>Free</td>
+                            <td>$20</td>
+                            <td class="chika-column"><strong>Free</strong> + $20 PRO</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Open Source</strong></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td><span class="checkmark">✓</span></td>
+                            <td><span class="xmark">✗</span></td>
+                            <td class="chika-column"><span class="checkmark">✓</span> MIT</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p style="margin-top: var(--space-lg); text-align: center; color: var(--text-muted); font-size: 0.875rem;">
+                ✅ = Available now | 🔜 = Coming soon | ⚠️ = Partial support
+            </p>
+        </div>
+    </section>
+
+    <!-- ==================== PRICING ==================== -->
+    <section class="section pricing-section">
+        <div class="container">
+            <h2 class="text-center">Simple, Transparent Pricing</h2>
+            
+            <div class="pricing-grid">
+                <!-- Free Tier -->
+                <div class="pricing-card fade-in">
+                    <h3 class="pricing-title">FREE</h3>
+                    <div class="pricing-price">
+                        $0<small>/month</small>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>3 AI models</li>
+                        <li>100 messages/day</li>
+                        <li>7-day context memory</li>
+                        <li>Web interface</li>
+                        <li>Community support</li>
+                    </ul>
+                    <button class="btn btn-secondary pricing-cta" onclick="window.location.href='#waitlist'">
+                        Start Free
+                    </button>
+                </div>
+
+                <!-- PRO Tier -->
+                <div class="pricing-card featured fade-in">
+                    <div class="pricing-badge">🔥 Most Popular</div>
+                    <h3 class="pricing-title">PRO</h3>
+                    <div class="pricing-price">
+                        $20<small>/month</small>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>10+ AI models</li>
+                        <li>Unlimited messages</li>
+                        <li>Unlimited context</li>
+                        <li>YOUR API keys = YOUR data</li>
+                        <li>Web + CLI access</li>
+                        <li>Priority support</li>
+                        <li>Early access to features</li>
+                    </ul>
+                    <button class="btn btn-primary pricing-cta" onclick="window.location.href='#waitlist'">
+                        Join Waitlist
+                    </button>
+                    <p style="text-align: center; margin-top: var(--space-md); font-size: 0.875rem; color: var(--chika-accent);">
+                        Early bird pricing available for beta testers
+                    </p>
+                </div>
+
+                <!-- Enterprise Tier -->
+                <div class="pricing-card fade-in">
+                    <h3 class="pricing-title">ENTERPRISE</h3>
+                    <div class="pricing-price">
+                        Custom
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Everything in PRO</li>
+                        <li>Self-hosting option</li>
+                        <li>Custom models</li>
+                        <li>Team collaboration</li>
+                        <li>SSO & SAML</li>
+                        <li>Dedicated support</li>
+                        <li>SLA guarantees</li>
+                    </ul>
+                    <button class="btn btn-secondary pricing-cta" onclick="alert('Contact: hello@chika.dev')">
+                        Contact Sales
+                    </button>
+                </div>
+            </div>
+
+            <div class="pricing-note">
+                <h4>💡 Honest Pricing</h4>
+                <p>
+                    We're pricing competitively with ChatGPT Plus ($20) and Claude Pro ($20). 
+                    <strong>But we need YOUR feedback first.</strong> Join the beta and help us 
+                    validate if this solves a real problem for you.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== WAITLIST SECTION ==================== -->
+    <section id="waitlist" class="waitlist-section">
+        <div class="container">
+            <div class="waitlist-content">
+                <h2>Join the Beta Waitlist</h2>
+                <p>
+                    Be among the first to experience true multi-AI collaboration. 
+                    We're launching in <strong>December 2025</strong> with limited beta spots.
+                </p>
+                
+                <form class="waitlist-form" id="waitlist-form">
+                    <input 
+                        type="email" 
+                        class="waitlist-input" 
+                        placeholder="your@email.com" 
+                        required
+                        id="email-input"
+                    >
+                    <button type="submit" class="btn btn-primary btn-large">
+                        Get Early Access
+                    </button>
+                </form>
+
+                <div class="waitlist-stats">
+                    <strong id="waitlist-count">0</strong>
+                    developers on the waitlist • Be among the first!
+                </div>
+
+                <div class="waitlist-benefits">
+                    <div class="benefit">
+                        ✅ Beta access in December
+                    </div>
+                    <div class="benefit">
+                        ✅ Help validate the market
+                    </div>
+                    <div class="benefit">
+                        ✅ Shape the product with us
+                    </div>
+                    <div class="benefit">
+                        ✅ Early bird pricing for testers
+                    </div>
+                </div>
+
+                <p style="margin-top: var(--space-lg); color: var(--text-muted); font-size: 0.875rem;">
+                    🇨🇭 Made in Switzerland • 🔒 Privacy-first • 💯 No spam, ever
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FAQ ==================== -->
+    <section class="section faq-section">
+        <div class="container">
+            <h2 class="text-center">Frequently Asked Questions</h2>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How is CHIKA different from using ChatGPT and Claude separately?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            With separate tools, you lose context when switching. You repeat yourself. 
+                            CHIKA makes AIs collaborate with full shared context - they see each other's 
+                            responses and build on them. It's true collaboration, not just switching.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How is this different from Continue.dev or Cursor?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Continue is IDE-only and doesn't have true multi-AI collaboration. 
+                            Cursor switches between models but they don't actually collaborate. 
+                            CHIKA works everywhere (web, CLI coming) and AIs truly work together.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Do I need API keys?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            <strong>Free tier:</strong> No, use ours (rate limited)<br>
+                            <strong>PRO tier:</strong> Yes, use yours for privacy & unlimited usage. 
+                            We'll guide you through setup.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Which AI models are supported?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            V1: GPT-4, Claude 3.5, Gemini Pro, DeepSeek, and more. 10+ models total.
+                            Via LiteLLM, we support 75+ models. We're constantly adding more.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is my data secure?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            PRO tier: YOUR API keys = we never see your data. 
+                            Open source = fully auditable. E2E encryption standard. 
+                            We take privacy seriously (Swiss-made 🇨🇭).
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>When does beta launch?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            December 2025. Join waitlist for early access and help us validate the market. 
+                            Early bird pricing available for beta testers.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Will there be a CLI?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Yes! Q1 2026. With local file access, git integration, 
+                            full dev workflow. For terminal lovers.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can I self-host?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Coming Q2 2026 for Enterprise tier. Open source = technically possible now, 
+                            but officially supported later with docs & support.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="#how-it-works">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="https://github.com/ruipedro-pinheiro/multi-ai-system">Roadmap</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/ruipedro-pinheiro/multi-ai-system">Documentation</a></li>
+                        <li><a href="https://github.com/ruipedro-pinheiro/multi-ai-system/blob/main/VALIDATION_ROADMAP.md">Blog</a></li>
+                        <li><a href="https://discord.gg/chika" target="_blank">Discord</a></li>
+                        <li><a href="https://github.com/ruipedro-pinheiro/multi-ai-system">API</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Social</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/ruipedro-pinheiro/multi-ai-system" target="_blank">GitHub</a></li>
+                        <li><a href="https://twitter.com/chika_ai" target="_blank">Twitter</a></li>
+                        <li><a href="https://reddit.com/r/chika" target="_blank">Reddit</a></li>
+                        <li><a href="mailto:hello@chika.dev">Email</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="#privacy">Privacy Policy</a></li>
+                        <li><a href="#terms">Terms of Service</a></li>
+                        <li><a href="#cookies">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2025 CHIKA. Open Source MIT License. Made with ❤️ in Switzerland 🇨🇭</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== LIVE DEMO MODAL ==================== -->
     <div id="chat-demo">
         <div class="chat-container">
             <div class="chat-header">
-                <h3 style="margin: 0;">Chika Demo - Multi-AI Chat</h3>
+                <h3 style="margin: 0;">🇨🇭 CHIKA Demo - Multi-AI Collaboration</h3>
                 <button class="chat-close" onclick="closeChat()">✕</button>
             </div>
 
             <div class="chat-messages" id="chat-messages">
                 <div class="message ai">
-                    <div class="ai-name">System</div>
+                    <div class="ai-name">SYSTEM</div>
                     <div class="message-content">
-                        Welcome to Chika! Ask anything and watch multiple AIs collaborate on your answer.
-                        <br><br>
-                        <strong>Available AIs:</strong> Gemini, GPT-4, Ollama (DeepSeek)
+                        <strong>Welcome to CHIKA!</strong><br><br>
+                        Ask anything and watch multiple AIs collaborate on your answer.<br><br>
+                        <strong>Available AIs:</strong> Gemini, GPT-4, Ollama (DeepSeek)<br><br>
+                        Try: "Explain quantum computing in simple terms"
                     </div>
                 </div>
             </div>
@@ -545,29 +1760,56 @@
         </div>
     </div>
 
+    <!-- ==================== JAVASCRIPT ==================== -->
     <script>
-        // Waitlist Form
-        let waitlistCount = 0;
+        // ========== WAITLIST FORM ==========
+        let waitlistCount = 0; // Real count from localStorage or backend
         
         document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email-input').value;
             
-            // TODO: Save to backend/database
+            // TODO: Save to backend/Supabase
             console.log('Waitlist signup:', email);
             
-            // Show success
-            alert('✅ Thanks! You\'re on the list. We\'ll email you when beta launches!');
-            
-            // Increment counter
-            waitlistCount++;
-            document.getElementById('waitlist-count').textContent = waitlistCount;
-            
-            // Clear form
-            document.getElementById('email-input').value = '';
+            try {
+                // Save to backend
+                const response = await fetch('http://localhost:8000/waitlist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                if (response.ok) {
+                    alert('✅ Amazing! You\'re on the list. Check your email for confirmation!');
+                    waitlistCount++;
+                    updateWaitlistCount();
+                    document.getElementById('email-input').value = '';
+                } else {
+                    throw new Error('Backend error');
+                }
+            } catch (error) {
+                // Fallback: localStorage
+                const emails = JSON.parse(localStorage.getItem('waitlist') || '[]');
+                if (!emails.includes(email)) {
+                    emails.push(email);
+                    localStorage.setItem('waitlist', JSON.stringify(emails));
+                    alert('✅ Amazing! You\'re on the list. We\'ll email you when beta launches!');
+                    waitlistCount++;
+                    updateWaitlistCount();
+                    document.getElementById('email-input').value = '';
+                } else {
+                    alert('You\'re already on the waitlist! 🎉');
+                }
+            }
         });
+        
+        function updateWaitlistCount() {
+            document.getElementById('waitlist-count').textContent = waitlistCount;
+            document.getElementById('header-count').textContent = waitlistCount;
+        }
 
-        // Chat Demo Functions
+        // ========== CHAT DEMO ==========
         function openChat() {
             document.getElementById('chat-demo').classList.add('active');
             document.getElementById('chat-input').focus();
@@ -590,18 +1832,14 @@
             addMessage('user', message);
             
             // Show loading
-            const loadingId = addMessage('ai', 'Thinking...', 'System', true);
+            const loadingId = addMessage('ai', 'Thinking...', 'SYSTEM', true);
             
             try {
                 // Call backend
                 const response = await fetch('http://localhost:8000/chat', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        content: message
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: message })
                 });
                 
                 const data = await response.json();
@@ -617,7 +1855,7 @@
             } catch (error) {
                 console.error('Chat error:', error);
                 document.getElementById(loadingId).remove();
-                addMessage('ai', '❌ Error connecting to backend. Make sure the server is running on port 8000.', 'System');
+                addMessage('ai', '❌ Error: Backend not running. Make sure server is on http://localhost:8000', 'SYSTEM');
             }
         }
 
@@ -638,11 +1876,56 @@
             return messageId;
         }
 
-        // ESC key to close chat
+        // ========== FAQ ACCORDION ==========
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                const isActive = item.classList.contains('active');
+                
+                // Close all
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                
+                // Open clicked (if wasn't active)
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // ========== SCROLL ANIMATIONS ==========
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // ========== ESC KEY TO CLOSE CHAT ==========
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeChat();
             }
+        });
+
+        // ========== SMOOTH SCROLL FOR ANCHOR LINKS ==========
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
         });
     </script>
 </body>
