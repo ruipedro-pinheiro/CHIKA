@@ -145,12 +145,15 @@ async def root():
 
 @app.get("/health")
 async def health():
-    """Health check"""
-    available = llm_router.get_available_providers()
+    """Health check endpoint"""
     return {
         "status": "healthy",
-        "available_ais": available,
-        "timestamp": datetime.now().isoformat()
+        "available_ais": list(llm_router.available_ais.keys()),
+        "timestamp": datetime.utcnow().isoformat(),
+        "env_check": {
+            "gmail_configured": bool(os.getenv('GMAIL_APP_PASSWORD')),
+            "db_configured": bool(os.getenv('DATABASE_URL'))
+        }
     }
 
 
