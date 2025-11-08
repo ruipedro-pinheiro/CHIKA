@@ -34,6 +34,9 @@
     <!-- Lucide Icons (Professional Icon Library) -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
+    <!-- Marked.js for Markdown Rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
     <style>
         /* ==================== ROOT VARIABLES ==================== */
         :root {
@@ -979,6 +982,52 @@
             background: rgba(99, 102, 241, 0.1);
             border-left: 3px solid var(--chika-primary);
             text-align: left;
+        }
+        
+        /* Markdown Styling in AI Messages */
+        .message.ai .message-content ul,
+        .message.ai .message-content ol {
+            margin: var(--space-xs) 0;
+            padding-left: var(--space-lg);
+        }
+        
+        .message.ai .message-content li {
+            margin: 4px 0;
+        }
+        
+        .message.ai .message-content p {
+            margin: var(--space-xs) 0;
+        }
+        
+        .message.ai .message-content code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .message.ai .message-content pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: var(--space-sm);
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            margin: var(--space-xs) 0;
+        }
+        
+        .message.ai .message-content pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        .message.ai .message-content strong {
+            color: var(--chika-accent);
+            font-weight: 700;
+        }
+        
+        .message.ai .message-content em {
+            color: var(--text-secondary);
+            font-style: italic;
         }
         
         .message.ai .ai-name {
@@ -2362,10 +2411,16 @@
             const messagesDiv = document.getElementById('chat-messages');
             const messageId = 'msg-' + Date.now();
             
+            // Convert markdown to HTML for AI responses (but not for user messages or status)
+            let formattedContent = content;
+            if (type === 'ai' && !isLoading && typeof marked !== 'undefined') {
+                formattedContent = marked.parse(content);
+            }
+            
             const messageHtml = `
                 <div class="message ${type} ${isLoading ? 'loading' : ''}" id="${messageId}">
                     ${aiName ? `<div class="ai-name">${aiName}</div>` : ''}
-                    <div class="message-content">${content}</div>
+                    <div class="message-content">${formattedContent}</div>
                 </div>
             `;
             
