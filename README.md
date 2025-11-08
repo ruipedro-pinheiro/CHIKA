@@ -2,10 +2,18 @@
 
 **Stop switching between AIs. Let them work together.**
 
-[![Status](https://img.shields.io/badge/status-pre--launch-yellow)](https://ruipedro-pinheiro.github.io/CHIKA/frontend-v1/)
+[![Status](https://img.shields.io/badge/status-beta_waitlist-yellow)](https://ruipedro-pinheiro.github.io/CHIKA/frontend-v1/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
+
+---
+
+## 🚀 **JOIN THE WAITLIST**
+
+**👉 [https://ruipedro-pinheiro.github.io/CHIKA/frontend-v1/](https://ruipedro-pinheiro.github.io/CHIKA/frontend-v1/) 👈**
+
+**Launching December 2025** - Sign up now for early access!
 
 ---
 
@@ -27,19 +35,12 @@ CHIKA connects multiple AI models (GPT-4, Claude, Gemini, local models) and make
 
 ---
 
-## 🚀 Live Demo
+## 📊 Production Infrastructure
 
-**Try it now:** [https://ruipedro-pinheiro.github.io/CHIKA/frontend-v1/](https://ruipedro-pinheiro.github.io/CHIKA/frontend-v1/)
-
-**Features:**
-- ✅ Real-time AI collaboration (not a mockup!)
-- ✅ Visual status updates showing which AI is processing
-- ✅ Single synthesized answer from multiple AIs
-- ✅ Fully functional backend (SmartRouter + LLM orchestration)
-
-**Demo Mode:**
-- Currently: GPT-4 + Ollama (local)
-- Production: GPT-4, Claude, Gemini, + any AI you connect
+**Live Waitlist Backend:** `https://chika-backend-r3ue.onrender.com`  
+**Landing Page:** `https://ruipedro-pinheiro.github.io/CHIKA/frontend-v1/`  
+**Database:** PostgreSQL on Render (Frankfurt)  
+**Email:** Gmail SMTP (welcome emails sent automatically)
 
 ---
 
@@ -182,18 +183,20 @@ MIT License - See [LICENSE](LICENSE)
 
 - Report bugs: [GitHub Issues](https://github.com/ruipedro-pinheiro/CHIKA/issues)
 - Suggest features: [Discussions](https://github.com/ruipedro-pinheiro/CHIKA/discussions)
-- Join waitlist: [Landing Page](https://ruipedro-pinheiro.github.io/CHIKA/frontend-v1/)
+- **Join waitlist:** **[https://ruipedro-pinheiro.github.io/CHIKA/frontend-v1/](https://ruipedro-pinheiro.github.io/CHIKA/frontend-v1/)**
 
 ---
 
-## 📊 Status
+## 📊 Production Status
 
-- **Backend:** ✅ Running (persistent)
-- **Frontend:** ✅ Deployed (GitHub Pages)
-- **Demo:** ✅ Live and functional
-- **Stage:** Pre-launch validation
+- **Waitlist Backend:** ✅ Live (`chika-backend-r3ue.onrender.com`)
+- **Landing Page:** ✅ Live (GitHub Pages)
+- **Database:** ✅ PostgreSQL (Render Frankfurt)
+- **Email Delivery:** ✅ Gmail SMTP (automated welcome emails)
+- **Signups:** 0 (reset 2025-11-08 14:32 UTC)
+- **Stage:** Beta Waitlist (Launch: December 2025)
 
-**Last updated:** 2025-11-08 11:10
+**Last updated:** 2025-11-08 14:33 UTC
 
 ---
 
