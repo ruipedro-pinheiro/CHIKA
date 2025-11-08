@@ -256,8 +256,12 @@ async def chat(chat_request: ChatRequest, request: Request):
 
 # === EMAIL HELPER === #
 
-def send_welcome_email(email: str, entry_id: int, db: Session):
+def send_welcome_email(email: str, entry_id: int):
     """Send welcome email via Gmail SMTP - BACKGROUND TASK!"""
+    # Create NEW DB session for background task (important!)
+    from database import SessionLocal
+    db = SessionLocal()
+    
     try:
         # Gmail credentials from environment
         gmail_user = os.getenv('GMAIL_USER', 'pedroyverdon@gmail.com')
@@ -266,6 +270,7 @@ def send_welcome_email(email: str, entry_id: int, db: Session):
         if not gmail_password:
             print(f"⚠️ GMAIL_APP_PASSWORD not set. Email not sent to {email}")
             print(f"   Generate one at: https://myaccount.google.com/apppasswords")
+            db.close()
             return
         
         # Create email message
@@ -325,6 +330,8 @@ def send_welcome_email(email: str, entry_id: int, db: Session):
         
     except Exception as e:
         print(f"❌ Email failed for {email}: {e}")
+    finally:
+        db.close()
 
 
 # === WAITLIST ROUTES === #
@@ -373,7 +380,7 @@ async def waitlist_signup(
         db.refresh(new_entry)
         
         # Send welcome email in BACKGROUND (non-blocking!)
-        background_tasks.add_task(send_welcome_email, email, new_entry.id, db)
+        background_tasks.add_task(send_welcome_email, email, new_entry.id)
         
         total = db.query(WaitlistEntry).count()
         
@@ -419,7 +426,7 @@ async def resend_all_emails(background_tasks: BackgroundTasks, db: Session = Dep
     pending = db.query(WaitlistEntry).filter(WaitlistEntry.email_sent == False).all()
     
     for entry in pending:
-        background_tasks.add_task(send_welcome_email, entry.email, entry.id, db)
+        background_tasks.add_task(send_welcome_email, entry.email, entry.id)
     
     return {
         "success": True,
