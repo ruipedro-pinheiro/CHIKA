@@ -2099,7 +2099,9 @@
         // ========== WAITLIST FORM ==========
         let waitlistCount = 0; // Real count from localStorage or backend
         
-        document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
+        // Wait for DOM to load before attaching listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email-input').value;
             
@@ -2136,7 +2138,8 @@
                     alert('You\'re already on the waitlist! 🎉');
                 }
             }
-        });
+            });
+        }); // End DOMContentLoaded
         
         function updateWaitlistCount() {
             document.getElementById('waitlist-count').textContent = waitlistCount;
