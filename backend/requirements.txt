@@ -4,4 +4,4 @@ pydantic[email]==2.9.2
 slowapi==0.1.9
 python-multipart==0.0.12
 litellm==1.52.8
-resend==2.5.0
+resend==2.19.0
