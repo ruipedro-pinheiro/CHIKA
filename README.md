@@ -13,7 +13,7 @@ Multi-AI chat platform where AIs collaborate like teammates in a group chat.
 ## 🚀 Quick Start (One Command!)
 
 ```bash
-./deploy.sh
+curl -fsSL https://raw.githubusercontent.com/ruipedro-pinheiro/multi-ai-system/main/install.sh | bash
 ```
 
 That's it! Open http://localhost:3000 🎉
