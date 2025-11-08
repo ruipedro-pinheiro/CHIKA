@@ -1133,51 +1133,61 @@
                 One interface. Better answers.
             </p>
 
-            <!-- Compact Interactive Demo -->
-            <div class="demo-preview" style="max-width: 800px; margin: 0 auto; background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05)); border-radius: 16px; padding: 32px; border: 1px solid rgba(99, 102, 241, 0.2);">
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                    <!-- Quick Preview -->
-                    <div style="text-align: center;">
-                        <div style="display: inline-flex; align-items: center; gap: 8px; background: var(--bg-card); padding: 8px 16px; border-radius: 20px; margin-bottom: 16px;">
-                            <span style="width: 6px; height: 6px; background: var(--chika-accent); border-radius: 50%; animation: pulse 2s infinite;"></span>
-                            <span style="font-size: 0.875rem; font-weight: 600; color: var(--chika-accent);">Live AI Demo</span>
+            <!-- LIVE EMBEDDED DEMO - NO MODAL -->
+            <div id="hero-demo" style="max-width: 900px; margin: 48px auto; background: var(--bg-card); border-radius: 20px; padding: 0; border: 2px solid rgba(99, 102, 241, 0.3); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);">
+                <!-- Demo Header -->
+                <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); padding: 20px 32px; border-bottom: 1px solid rgba(99, 102, 241, 0.2); border-radius: 20px 20px 0 0;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <img src="chika-mascot.svg" alt="CHIKA" style="width: 32px; height: 32px;">
+                            <h3 style="margin: 0; font-size: 1.25rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Live AI Collaboration</h3>
                         </div>
-                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0;">
-                            Multiple AIs collaborate on your question. Watch them build on each other's answers.
-                        </p>
+                        <span style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: var(--chika-accent); font-weight: 600;">
+                            <span style="width: 8px; height: 8px; background: var(--chika-accent); border-radius: 50%; animation: pulse 2s infinite;"></span>
+                            Real-time
+                        </span>
                     </div>
-                    
-                    <!-- Interactive Input -->
+                </div>
+                
+                <!-- Messages Area -->
+                <div id="hero-messages" style="min-height: 400px; max-height: 600px; overflow-y: auto; padding: 24px 32px; display: flex; flex-direction: column; gap: 16px;">
+                    <!-- Welcome Message -->
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <div style="font-size: 3rem; margin-bottom: 16px;">🤖✨</div>
+                        <h4 style="color: var(--text-primary); margin-bottom: 12px;">Ask me anything!</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                            Type a question below and watch multiple AIs collaborate in real-time.
+                        </p>
+                        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 24px;">
+                            <button onclick="askHeroQuestion('Fun fact about ThinkPad laptops?')" style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 20px; padding: 8px 16px; color: var(--chika-primary); font-size: 0.875rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(99, 102, 241, 0.2)'" onmouseout="this.style.background='rgba(99, 102, 241, 0.1)'">
+                                💻 ThinkPad facts
+                            </button>
+                            <button onclick="askHeroQuestion('Explain quantum computing in simple terms')" style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 20px; padding: 8px 16px; color: var(--chika-primary); font-size: 0.875rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(99, 102, 241, 0.2)'" onmouseout="this.style.background='rgba(99, 102, 241, 0.1)'">
+                                🤖 Quantum computing
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Input Area -->
+                <div style="padding: 20px 32px; border-top: 1px solid rgba(99, 102, 241, 0.2); background: rgba(99, 102, 241, 0.03);">
                     <div style="display: flex; gap: 12px; align-items: stretch;">
                         <input 
                             type="text" 
-                            id="hero-prompt-input"
-                            placeholder="Ask anything... Try: 'Explain quantum computing'"
-                            style="flex: 1; background: var(--bg-card); border: 2px solid rgba(99, 102, 241, 0.2); border-radius: 12px; padding: 16px 20px; color: var(--text-primary); font-size: 1rem; transition: all 0.2s;"
+                            id="hero-input"
+                            placeholder="Ask anything... (e.g., 'Best laptop for developers?')"
+                            style="flex: 1; background: var(--bg-input); border: 2px solid rgba(99, 102, 241, 0.2); border-radius: 12px; padding: 16px 20px; color: var(--text-primary); font-size: 1rem; transition: all 0.2s;"
                             onfocus="this.style.borderColor='var(--chika-primary)'; this.style.boxShadow='0 0 0 3px rgba(99, 102, 241, 0.1)'"
                             onblur="this.style.borderColor='rgba(99, 102, 241, 0.2)'; this.style.boxShadow='none'"
-                            onkeypress="if(event.key==='Enter') openChatWithPrompt()"
+                            onkeypress="if(event.key==='Enter') sendHeroMessage()"
                         />
                         <button 
-                            onclick="openChatWithPrompt()" 
+                            onclick="sendHeroMessage()" 
                             class="btn btn-primary"
                             style="padding: 16px 32px; display: flex; align-items: center; gap: 10px; white-space: nowrap; font-weight: 600; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);"
                         >
-                            <i data-lucide="sparkles" style="width: 20px; height: 20px;"></i>
-                            Try Now
-                        </button>
-                    </div>
-                    
-                    <!-- Example badges -->
-                    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-                        <button onclick="document.getElementById('hero-prompt-input').value='Fun fact about ThinkPad?'; openChatWithPrompt();" style="background: var(--bg-card); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 20px; padding: 8px 16px; color: var(--text-secondary); font-size: 0.875rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--chika-primary)'; this.style.color='var(--chika-primary)'" onmouseout="this.style.borderColor='rgba(99, 102, 241, 0.2)'; this.style.color='var(--text-secondary)'">
-                            💻 ThinkPad facts
-                        </button>
-                        <button onclick="document.getElementById('hero-prompt-input').value='Explain AI in simple terms'; openChatWithPrompt();" style="background: var(--bg-card); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 20px; padding: 8px 16px; color: var(--text-secondary); font-size: 0.875rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--chika-primary)'; this.style.color='var(--chika-primary)'" onmouseout="this.style.borderColor='rgba(99, 102, 241, 0.2)'; this.style.color='var(--text-secondary)'">
-                            🤖 Explain AI
-                        </button>
-                        <button onclick="document.getElementById('hero-prompt-input').value='Best programming language for beginners?'; openChatWithPrompt();" style="background: var(--bg-card); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 20px; padding: 8px 16px; color: var(--text-secondary); font-size: 0.875rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--chika-primary)'; this.style.color='var(--chika-primary)'" onmouseout="this.style.borderColor='rgba(99, 102, 241, 0.2)'; this.style.color='var(--text-secondary)'">
-                            💡 Best language?
+                            <i data-lucide="send" style="width: 20px; height: 20px;"></i>
+                            Ask AI
                         </button>
                     </div>
                 </div>
@@ -2019,32 +2029,122 @@
         }
 
         // ========== CHAT DEMO ==========
-        function openChat() {
-            document.getElementById('chat-demo').style.display = 'flex';
-            document.getElementById('chat-input').focus();
+        // HERO EMBEDDED DEMO FUNCTIONS
+        function askHeroQuestion(question) {
+            document.getElementById('hero-input').value = question;
+            sendHeroMessage();
         }
         
-        function openChatWithPrompt() {
-            const promptInput = document.getElementById('hero-prompt-input');
-            const prompt = promptInput.value.trim();
+        async function sendHeroMessage() {
+            const input = document.getElementById('hero-input');
+            const message = input.value.trim();
             
-            if (prompt) {
-                // Open modal
-                document.getElementById('chat-demo').style.display = 'flex';
-                
-                // Set the prompt in the chat input
-                const chatInput = document.getElementById('chat-input');
-                chatInput.value = prompt;
-                
-                // Auto-send after a brief delay
-                setTimeout(() => {
-                    sendMessage();
-                    promptInput.value = ''; // Clear hero input
-                }, 100);
-            } else {
-                // Just open if empty
-                openChat();
+            if (!message) return;
+            
+            const messagesDiv = document.getElementById('hero-messages');
+            
+            // Clear welcome if first message
+            if (messagesDiv.querySelector('h4')) {
+                messagesDiv.innerHTML = '';
             }
+            
+            // Add user message
+            addHeroMessage('user', message);
+            input.value = '';
+            
+            // Show loading
+            const loadingId = 'loading-' + Date.now();
+            addHeroMessage('system', 'Thinking...', loadingId);
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000);
+                
+                const response = await fetch('https://jade-received-montreal-titans.trycloudflare.com/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: message }),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                
+                // Remove loading
+                document.getElementById(loadingId)?.remove();
+                
+                if (!data.ai_responses || data.ai_responses.length === 0) {
+                    throw new Error('No responses');
+                }
+                
+                // Add AI responses with delay
+                data.ai_responses.forEach((aiResp, index) => {
+                    setTimeout(() => {
+                        addHeroMessage('ai', aiResp.content, null, aiResp.ai.toUpperCase());
+                    }, index * 400);
+                });
+                
+            } catch (error) {
+                document.getElementById(loadingId)?.remove();
+                
+                let errorMsg = '❌ ';
+                if (error.name === 'AbortError') {
+                    errorMsg += 'Timeout (30s). Backend might be starting...';
+                } else if (error.message.includes('429')) {
+                    errorMsg += 'Rate limit. Wait 1 minute.';
+                } else {
+                    errorMsg += 'Connection failed. Backend offline?';
+                }
+                
+                addHeroMessage('system', errorMsg);
+            }
+        }
+        
+        function addHeroMessage(type, content, id, aiName) {
+            const messagesDiv = document.getElementById('hero-messages');
+            const msgId = id || 'msg-' + Date.now();
+            
+            let html = '';
+            if (type === 'user') {
+                html = `<div class="message user" id="${msgId}" style="display: flex; justify-content: flex-end; margin: 8px 0;">
+                    <div style="background: var(--chika-primary); color: white; padding: 14px 18px; border-radius: 16px; max-width: 75%; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);">
+                        ${content}
+                    </div>
+                </div>`;
+            } else if (type === 'ai') {
+                const colors = {
+                    'GPT': '#6366f1',
+                    'GEMINI': '#10b981',
+                    'OLLAMA': '#f59e0b',
+                    'CLAUDE': '#8b5cf6'
+                };
+                const color = colors[aiName] || '#6366f1';
+                
+                html = `<div class="message ai" id="${msgId}" style="display: flex; gap: 12px; align-items: start; margin: 8px 0;">
+                    <div style="background: ${color}; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                        <i data-lucide="cpu" style="width: 20px; height: 20px; color: white;"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 600;">${aiName}</div>
+                        <div style="background: var(--bg-hover); padding: 14px 18px; border-radius: 16px; color: var(--text-primary); line-height: 1.6;">
+                            ${content}
+                        </div>
+                    </div>
+                </div>`;
+            } else {
+                html = `<div class="message system" id="${msgId}" style="text-align: center; margin: 12px 0; color: var(--text-muted); font-size: 0.9rem;">
+                    ${content}
+                </div>`;
+            }
+            
+            messagesDiv.insertAdjacentHTML('beforeend', html);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            // Re-init Lucide icons
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         function closeChat() {
