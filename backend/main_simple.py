@@ -2,7 +2,7 @@
 
 Refacto: User → Message → Multi-AI Responses (direct!)
 """
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import FastAPI, HTTPException, Request, Depends, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr, validator
 from typing import Optional, List, Dict
@@ -256,8 +256,8 @@ async def chat(chat_request: ChatRequest, request: Request):
 
 # === EMAIL HELPER === #
 
-def send_welcome_email(email: str, waitlist_entry: WaitlistEntry, db: Session):
-    """Send welcome email via Gmail SMTP - NO BULLSHIT!"""
+def send_welcome_email(email: str, entry_id: int, db: Session):
+    """Send welcome email via Gmail SMTP - BACKGROUND TASK!"""
     try:
         # Gmail credentials from environment
         gmail_user = os.getenv('GMAIL_USER', 'pedroyverdon@gmail.com')
@@ -309,16 +309,19 @@ def send_welcome_email(email: str, waitlist_entry: WaitlistEntry, db: Session):
         msg.attach(MIMEText(html, 'html'))
         
         # Send via Gmail SMTP
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+        print(f"📧 Sending email to {email}...")
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=10) as server:
             server.login(gmail_user, gmail_password)
             server.send_message(msg)
         
         print(f"✅ Welcome email sent to {email} via Gmail SMTP")
         
-        # Mark as sent in database
-        waitlist_entry.email_sent = True
-        waitlist_entry.email_sent_at = datetime.utcnow()
-        db.commit()
+        # Mark as sent in database (fetch fresh entry)
+        entry = db.query(WaitlistEntry).filter(WaitlistEntry.id == entry_id).first()
+        if entry:
+            entry.email_sent = True  # type: ignore
+            entry.email_sent_at = datetime.utcnow()  # type: ignore
+            db.commit()
         
     except Exception as e:
         print(f"❌ Email failed for {email}: {e}")
@@ -328,14 +331,19 @@ def send_welcome_email(email: str, waitlist_entry: WaitlistEntry, db: Session):
 
 @app.post("/waitlist", response_model=WaitlistResponse)
 @limiter.limit("5/minute")
-async def waitlist_signup(signup: WaitlistRequest, request: Request, db: Session = Depends(get_db)):
+async def waitlist_signup(
+    signup: WaitlistRequest, 
+    request: Request, 
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db)
+):
     """
     Add email to waitlist
     
     Features:
     - Saves to PostgreSQL/SQLite database
     - Prevents duplicates
-    - Sends welcome email
+    - Sends welcome email (async in background)
     - Rate limited (5/min)
     - Tracks IP, user agent, referrer
     """
@@ -364,11 +372,8 @@ async def waitlist_signup(signup: WaitlistRequest, request: Request, db: Session
         db.commit()
         db.refresh(new_entry)
         
-        # Send welcome email (non-blocking)
-        try:
-            send_welcome_email(email, new_entry, db)
-        except Exception as e:
-            print(f"⚠️ Email failed: {e}")
+        # Send welcome email in BACKGROUND (non-blocking!)
+        background_tasks.add_task(send_welcome_email, email, new_entry.id, db)
         
         total = db.query(WaitlistEntry).count()
         
