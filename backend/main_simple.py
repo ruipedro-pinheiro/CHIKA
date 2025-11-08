@@ -9,8 +9,9 @@ from typing import Optional, List, Dict
 from datetime import datetime
 from sqlalchemy.orm import Session
 import os
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -256,59 +257,63 @@ async def chat(chat_request: ChatRequest, request: Request):
 # === EMAIL HELPER === #
 
 def send_welcome_email(email: str, waitlist_entry: WaitlistEntry, db: Session):
-    """Send welcome email to new signup via SendGrid"""
+    """Send welcome email via Gmail SMTP - NO BULLSHIT!"""
     try:
-        # Get SendGrid API key from environment
-        api_key = os.getenv('SENDGRID_API_KEY')
+        # Gmail credentials from environment
+        gmail_user = os.getenv('GMAIL_USER', 'pedroyverdon@gmail.com')
+        gmail_password = os.getenv('GMAIL_APP_PASSWORD')
         
-        if not api_key:
-            print(f"⚠️ SENDGRID_API_KEY not set. Email not sent to {email}")
-            print(f"   To enable emails: export SENDGRID_API_KEY='your_key'")
+        if not gmail_password:
+            print(f"⚠️ GMAIL_APP_PASSWORD not set. Email not sent to {email}")
+            print(f"   Generate one at: https://myaccount.google.com/apppasswords")
             return
         
         # Create email message
-        message = Mail(
-            from_email='pedroyverdon@gmail.com',  # Verified sender email
-            to_emails=email,
-            subject='Welcome to CHIKA Beta! 🚀',
-            html_content=f"""
-            <html>
-            <body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <h2 style="color: #6366f1;">Welcome to CHIKA Beta! 🎉</h2>
-                
-                <p>Hey there!</p>
-                
-                <p>You're officially on the <strong>CHIKA beta waitlist</strong>! We're launching in <strong>December 2025</strong> with limited spots.</p>
-                
-                <h3>What happens next?</h3>
-                <ul>
-                    <li>We'll email you when beta launches (December 2025)</li>
-                    <li>You'll get early access before public release</li>
-                    <li>Special pricing for early testers</li>
-                </ul>
-                
-                <h3>Want to help shape CHIKA?</h3>
-                <p>Reply to this email with feedback, feature requests, or just to say hi! We're building in public and love hearing from early supporters.</p>
-                
-                <p style="margin-top: 40px; color: #666;">
-                    - Pedro, Founder<br>
-                    <a href="https://github.com/ruipedro-pinheiro/CHIKA">Follow us on GitHub</a>
-                </p>
-                
-                <p style="font-size: 12px; color: #999; margin-top: 40px;">
-                    You received this because you signed up on CHIKA waitlist. 
-                    <a href="mailto:pedroyverdon@gmail.com">Unsubscribe</a>
-                </p>
-            </body>
-            </html>
-            """
-        )
+        msg = MIMEMultipart('alternative')
+        msg['From'] = f"CHIKA <{gmail_user}>"
+        msg['To'] = email
+        msg['Subject'] = 'Welcome to CHIKA Beta! 🚀'
         
-        # Send email
-        sg = SendGridAPIClient(api_key)
-        response = sg.send(message)
+        html = f"""
+        <html>
+        <body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h2 style="color: #6366f1;">Welcome to CHIKA Beta! 🎉</h2>
+            
+            <p>Hey there!</p>
+            
+            <p>You're officially on the <strong>CHIKA beta waitlist</strong>! We're launching in <strong>December 2025</strong> with limited spots.</p>
+            
+            <h3>What happens next?</h3>
+            <ul>
+                <li>We'll email you when beta launches (December 2025)</li>
+                <li>You'll get early access before public release</li>
+                <li>Special pricing for early testers</li>
+            </ul>
+            
+            <h3>Want to help shape CHIKA?</h3>
+            <p>Reply to this email with feedback, feature requests, or just to say hi! We're building in public and love hearing from early supporters.</p>
+            
+            <p style="margin-top: 40px; color: #666;">
+                - Pedro, Founder<br>
+                <a href="https://github.com/ruipedro-pinheiro/CHIKA">Follow us on GitHub</a>
+            </p>
+            
+            <p style="font-size: 12px; color: #999; margin-top: 40px;">
+                You received this because you signed up on CHIKA waitlist. 
+                Reply to unsubscribe.
+            </p>
+        </body>
+        </html>
+        """
         
-        print(f"✅ Welcome email sent to {email} (Status: {response.status_code})")
+        msg.attach(MIMEText(html, 'html'))
+        
+        # Send via Gmail SMTP
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(gmail_user, gmail_password)
+            server.send_message(msg)
+        
+        print(f"✅ Welcome email sent to {email} via Gmail SMTP")
         
         # Mark as sent in database
         waitlist_entry.email_sent = True
