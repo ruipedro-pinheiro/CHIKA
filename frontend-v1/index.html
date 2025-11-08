@@ -2127,7 +2127,7 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
                 
-                const response = await fetch('https://generation-conclusion-whose-christmas.trycloudflare.com/chat', {
+                const response = await fetch('https://chika-backend-r3ue.onrender.com/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ content: message }),
@@ -2284,7 +2284,7 @@
             
             try {
                 // Save to backend
-                const response = await fetch('https://generation-conclusion-whose-christmas.trycloudflare.com/waitlist', {
+                const response = await fetch('https://chika-backend-r3ue.onrender.com/waitlist', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
@@ -2343,7 +2343,7 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
                 
-                const response = await fetch('https://generation-conclusion-whose-christmas.trycloudflare.com/chat', {
+                const response = await fetch('https://chika-backend-r3ue.onrender.com/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ content: message }),
@@ -2521,7 +2521,7 @@
         // Check backend health
         async function checkBackendHealth() {
             try {
-                const response = await fetch('https://generation-conclusion-whose-christmas.trycloudflare.com/health', {
+                const response = await fetch('https://chika-backend-r3ue.onrender.com/health', {
                     method: 'GET',
                     signal: AbortSignal.timeout(3000)
                 });
