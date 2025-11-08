@@ -136,7 +136,7 @@ async def health():
 
 @app.post("/chat", response_model=ChatResponse)
 @limiter.limit("10/minute")  # Max 10 requests per minute per IP
-async def chat(request: ChatRequest, http_request: Request):
+async def chat(chat_request: ChatRequest, request: Request):
     """
     Send message to multi-AI system
     
@@ -146,19 +146,19 @@ async def chat(request: ChatRequest, http_request: Request):
         # User message
         user_msg = {
             "role": "user",
-            "content": request.content,
+            "content": chat_request.content,
             "timestamp": datetime.now().isoformat()
         }
         
         # Determine which AIs to use
-        if request.preferred_ais:
+        if chat_request.preferred_ais:
             # User specified AIs
-            selected_ais = request.preferred_ais
+            selected_ais = chat_request.preferred_ais
             intent_analysis = None
         else:
             # SmartRouter decides
             available_ais = llm_router.get_available_providers()
-            selected_ais = smart_router.select_ais(request.content, available_ais)
+            selected_ais = smart_router.select_ais(chat_request.content, available_ais)
             intent_analysis = None  # SmartRouter does analysis internally
         
         # Get responses from selected AIs (SEQUENTIAL COLLABORATION!)
