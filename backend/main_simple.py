@@ -2,11 +2,14 @@
 
 Refacto: User → Message → Multi-AI Responses (direct!)
 """
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, validator
 from typing import Optional, List, Dict
 from datetime import datetime
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 # Config
 from config import settings
@@ -19,12 +22,19 @@ from security.input_sanitizer import InputSanitizer
 from security.prompt_filter import PromptSecurityFilter
 from security.headers import SecurityHeadersMiddleware
 
+# Initialize Rate Limiter
+limiter = Limiter(key_func=get_remote_address)
+
 # Initialize FastAPI
 app = FastAPI(
     title="Chika API V1",
     version="1.0.0",
     description="Multi-AI chat platform - Simple & Direct"
 )
+
+# Rate limiting
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # CORS
 app.add_middleware(SecurityHeadersMiddleware)
@@ -125,7 +135,8 @@ async def health():
 
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest):
+@limiter.limit("10/minute")  # Max 10 requests per minute per IP
+async def chat(request: ChatRequest, http_request: Request):
     """
     Send message to multi-AI system
     

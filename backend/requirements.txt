@@ -23,3 +23,6 @@ httpx==0.25.1
 # CLI/TUI
 textual==0.47.0
 rich==13.7.0
+
+# Rate limiting for production
+slowapi==0.1.9
