@@ -1,0 +1,13 @@
+# Backend Testing Dependencies
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-asyncio>=0.21.0
+httpx>=0.24.0
+faker>=19.0.0
+
+# Performance testing
+locust>=2.15.0
+
+# Security testing
+bandit>=1.7.5
+safety>=2.3.0

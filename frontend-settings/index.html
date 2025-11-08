@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chika Settings - Configuration</title>
+    <link rel="stylesheet" href="../design-system/chika-design.css">
+    <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="settings-header">
+        <div class="header-left">
+            <a href="../frontend-home/index.html" class="back-btn">← Retour</a>
+            <h1>⚙️ Paramètres Chika</h1>
+        </div>
+        <div class="header-right">
+            <button id="save-all" class="btn btn-primary">💾 Sauvegarder tout</button>
+        </div>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <div class="settings-layout">
+        <aside class="settings-sidebar">
+            <nav class="settings-nav">
+                <button class="nav-item active" data-section="api-keys">
+                    🔑 API Keys
+                </button>
+                <button class="nav-item" data-section="oauth">
+                    🔐 OAuth
+                </button>
+                <button class="nav-item" data-section="models">
+                    🤖 Modèles IA
+                </button>
+                <button class="nav-item" data-section="preferences">
+                    🎨 Préférences
+                </button>
+                <button class="nav-item" data-section="advanced">
+                    ⚡ Avancé
+                </button>
+                <button class="nav-item" data-section="about">
+                    ℹ️ À propos
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="settings-main">
+            <!-- Section: API Keys -->
+            <section id="api-keys" class="settings-section active">
+                <h2>🔑 Clés API</h2>
+                <p class="section-description">
+                    Configurez vos clés API pour les différents fournisseurs d'IA.
+                    Les clés sont stockées localement dans votre navigateur.
+                </p>
+
+                <!-- Anthropic -->
+                <div class="setting-group card">
+                    <div class="setting-header">
+                        <div class="setting-info">
+                            <h3>🤖 Anthropic (Claude)</h3>
+                            <p>Claude 3 Opus, Sonnet, Haiku</p>
+                        </div>
+                        <div class="setting-status" id="status-anthropic">
+                            <span class="status-badge">Non configuré</span>
+                        </div>
+                    </div>
+                    <div class="setting-body">
+                        <div class="form-group">
+                            <label>API Key</label>
+                            <div class="input-with-button">
+                                <input 
+                                    type="password" 
+                                    id="anthropic-key" 
+                                    class="input" 
+                                    placeholder="sk-ant-..."
+                                    autocomplete="off"
+                                >
+                                <button class="btn btn-secondary toggle-password" data-target="anthropic-key">
+                                    👁️
+                                </button>
+                            </div>
+                            <small class="input-help">
+                                Obtenez votre clé sur 
+                                <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
+                            </small>
+                        </div>
+                        <button class="btn btn-ghost test-api" data-provider="anthropic">
+                            🧪 Tester la connexion
+                        </button>
+                    </div>
+                </div>
+
+                <!-- OpenAI -->
+                <div class="setting-group card">
+                    <div class="setting-header">
+                        <div class="setting-info">
+                            <h3>🧠 OpenAI (GPT)</h3>
+                            <p>GPT-4, GPT-4 Turbo, GPT-3.5</p>
+                        </div>
+                        <div class="setting-status" id="status-openai">
+                            <span class="status-badge">Non configuré</span>
+                        </div>
+                    </div>
+                    <div class="setting-body">
+                        <div class="form-group">
+                            <label>API Key</label>
+                            <div class="input-with-button">
+                                <input 
+                                    type="password" 
+                                    id="openai-key" 
+                                    class="input" 
+                                    placeholder="sk-..."
+                                    autocomplete="off"
+                                >
+                                <button class="btn btn-secondary toggle-password" data-target="openai-key">
+                                    👁️
+                                </button>
+                            </div>
+                            <small class="input-help">
+                                Obtenez votre clé sur 
+                                <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>
+                            </small>
+                        </div>
+                        <button class="btn btn-ghost test-api" data-provider="openai">
+                            🧪 Tester la connexion
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Google -->
+                <div class="setting-group card">
+                    <div class="setting-header">
+                        <div class="setting-info">
+                            <h3>✨ Google (Gemini)</h3>
+                            <p>Gemini Pro, Gemini Ultra</p>
+                        </div>
+                        <div class="setting-status" id="status-google">
+                            <span class="status-badge">Non configuré</span>
+                        </div>
+                    </div>
+                    <div class="setting-body">
+                        <div class="form-group">
+                            <label>API Key</label>
+                            <div class="input-with-button">
+                                <input 
+                                    type="password" 
+                                    id="google-key" 
+                                    class="input" 
+                                    placeholder="AI..."
+                                    autocomplete="off"
+                                >
+                                <button class="btn btn-secondary toggle-password" data-target="google-key">
+                                    👁️
+                                </button>
+                            </div>
+                            <small class="input-help">
+                                Obtenez votre clé sur 
+                                <a href="https://makersuite.google.com/app/apikey" target="_blank">makersuite.google.com</a>
+                            </small>
+                        </div>
+                        <button class="btn btn-ghost test-api" data-provider="google">
+                            🧪 Tester la connexion
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ollama -->
+                <div class="setting-group card">
+                    <div class="setting-header">
+                        <div class="setting-info">
+                            <h3>🦙 Ollama (Local)</h3>
+                            <p>Modèles locaux - Gratuit et privé</p>
+                        </div>
+                        <div class="setting-status" id="status-ollama">
+                            <span class="status-badge success">Disponible</span>
+                        </div>
+                    </div>
+                    <div class="setting-body">
+                        <div class="form-group">
+                            <label>URL du serveur Ollama</label>
+                            <input 
+                                type="text" 
+                                id="ollama-url" 
+                                class="input" 
+                                placeholder="http://localhost:11434"
+                                value="http://localhost:11434"
+                            >
+                            <small class="input-help">
+                                Installez Ollama depuis 
+                                <a href="https://ollama.ai" target="_blank">ollama.ai</a>
+                            </small>
+                        </div>
+                        <button class="btn btn-ghost test-api" data-provider="ollama">
+                            🧪 Tester la connexion
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: OAuth -->
+            <section id="oauth" class="settings-section">
+                <h2>🔐 OAuth Configuration</h2>
+                <p class="section-description">
+                    Authentification OAuth pour accès direct aux plateformes IA.
+                    Recommandé pour fonctionnalités avancées.
+                </p>
+
+                <!-- Anthropic OAuth -->
+                <div class="setting-group card">
+                    <div class="setting-header">
+                        <div class="setting-info">
+                            <h3>🤖 Anthropic OAuth</h3>
+                            <p>Accès direct à Claude via OAuth2 + PKCE</p>
+                        </div>
+                        <div class="setting-status" id="oauth-status-anthropic">
+                            <span class="status-badge">Non connecté</span>
+                        </div>
+                    </div>
+                    <div class="setting-body">
+                        <button class="btn btn-primary oauth-connect" data-provider="anthropic">
+                            🔗 Connecter avec Anthropic
+                        </button>
+                        <div class="oauth-info hidden" id="oauth-info-anthropic">
+                            <p><strong>Token:</strong> <code class="token-display">sk-ant-***</code></p>
+                            <p><strong>Expires:</strong> <span class="token-expiry">-</span></p>
+                            <button class="btn btn-ghost btn-sm oauth-disconnect" data-provider="anthropic">
+                                🔓 Déconnecter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Models -->
+            <section id="models" class="settings-section">
+                <h2>🤖 Configuration Modèles IA</h2>
+                <p class="section-description">
+                    Sélectionnez les modèles par défaut pour chaque fournisseur.
+                </p>
+
+                <div class="setting-group card">
+                    <div class="form-group">
+                        <label>Modèle Claude par défaut</label>
+                        <select id="claude-model" class="input">
+                            <option value="claude-3-opus-20240229">Claude 3 Opus (Plus puissant)</option>
+                            <option value="claude-3-sonnet-20240229" selected>Claude 3 Sonnet (Équilibré)</option>
+                            <option value="claude-3-haiku-20240307">Claude 3 Haiku (Plus rapide)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Modèle GPT par défaut</label>
+                        <select id="gpt-model" class="input">
+                            <option value="gpt-4-turbo-preview">GPT-4 Turbo (Recommandé)</option>
+                            <option value="gpt-4">GPT-4</option>
+                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Plus rapide)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Modèle Gemini par défaut</label>
+                        <select id="gemini-model" class="input">
+                            <option value="gemini-pro" selected>Gemini Pro</option>
+                            <option value="gemini-ultra">Gemini Ultra</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Preferences -->
+            <section id="preferences" class="settings-section">
+                <h2>🎨 Préférences Utilisateur</h2>
+                
+                <div class="setting-group card">
+                    <h3>Interface</h3>
+                    
+                    <div class="form-group">
+                        <label>Thème par défaut</label>
+                        <select id="default-theme" class="input">
+                            <option value="dark" selected>Sombre ({ })</option>
+                            <option value="light">Clair (λ)</option>
+                            <option value="auto">Auto (système)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Interface par défaut</label>
+                        <select id="default-interface" class="input">
+                            <option value="zen">Zen Mode</option>
+                            <option value="arena">Arena Mode</option>
+                            <option value="cards">Cards Mode</option>
+                            <option value="home" selected>Page d'accueil</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group checkbox">
+                        <label>
+                            <input type="checkbox" id="enable-sounds">
+                            Activer les sons
+                        </label>
+                    </div>
+
+                    <div class="form-group checkbox">
+                        <label>
+                            <input type="checkbox" id="enable-notifications" checked>
+                            Activer les notifications
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-group card">
+                    <h3>Chat</h3>
+                    
+                    <div class="form-group">
+                        <label>Longueur réponse par défaut</label>
+                        <select id="response-length" class="input">
+                            <option value="short">Courte</option>
+                            <option value="medium" selected>Moyenne</option>
+                            <option value="long">Longue</option>
+                            <option value="custom">Personnalisée</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Température (créativité)</label>
+                        <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.7" class="slider">
+                        <div class="slider-value">
+                            <span>Précis</span>
+                            <strong id="temperature-value">0.7</strong>
+                            <span>Créatif</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group checkbox">
+                        <label>
+                            <input type="checkbox" id="auto-save" checked>
+                            Sauvegarder automatiquement les conversations
+                        </label>
+                    </div>
+
+                    <div class="form-group checkbox">
+                        <label>
+                            <input type="checkbox" id="markdown-preview" checked>
+                            Aperçu Markdown en temps réel
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Advanced -->
+            <section id="advanced" class="settings-section">
+                <h2>⚡ Paramètres Avancés</h2>
+                
+                <div class="setting-group card">
+                    <h3>Performance</h3>
+                    
+                    <div class="form-group">
+                        <label>Max tokens par réponse</label>
+                        <input type="number" id="max-tokens" class="input" value="4096" min="256" max="32768" step="256">
+                        <small class="input-help">Plus élevé = réponses plus longues mais plus coûteuses</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Timeout requête (secondes)</label>
+                        <input type="number" id="request-timeout" class="input" value="60" min="10" max="300" step="5">
+                    </div>
+
+                    <div class="form-group checkbox">
+                        <label>
+                            <input type="checkbox" id="enable-streaming" checked>
+                            Activer streaming WebSocket
+                        </label>
+                    </div>
+
+                    <div class="form-group checkbox">
+                        <label>
+                            <input type="checkbox" id="enable-cache">
+                            Activer cache Redis (beta)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-group card">
+                    <h3>Contexte & Mémoire</h3>
+                    
+                    <div class="form-group">
+                        <label>Taille contexte partagé (messages)</label>
+                        <input type="number" id="context-size" class="input" value="50" min="10" max="200" step="10">
+                        <small class="input-help">Nombre de messages gardés dans le contexte partagé</small>
+                    </div>
+
+                    <div class="form-group checkbox">
+                        <label>
+                            <input type="checkbox" id="auto-compress" checked>
+                            Auto-compression contexte (sauvegarder tokens)
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-secondary" id="clear-context">
+                            🗑️ Effacer tout le contexte
+                        </button>
+                    </div>
+                </div>
+
+                <div class="setting-group card">
+                    <h3>Données & Sécurité</h3>
+                    
+                    <div class="form-group">
+                        <button class="btn btn-secondary" id="export-settings">
+                            📥 Exporter paramètres
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-secondary" id="import-settings">
+                            📤 Importer paramètres
+                        </button>
+                        <input type="file" id="import-file" accept=".json" class="hidden">
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-ghost" id="reset-all">
+                            🔄 Réinitialiser tous les paramètres
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: About -->
+            <section id="about" class="settings-section">
+                <h2>ℹ️ À propos de Chika</h2>
+                
+                <div class="setting-group card">
+                    <div class="about-logo">
+                        <div class="logo-icon-large">🇨🇭</div>
+                        <h3>Chika Multi-AI Platform</h3>
+                        <p class="swiss-made-badge">🇨🇭 Swiss-Made</p>
+                        <p class="version">Version 1.0.0</p>
+                    </div>
+
+                    <div class="about-info">
+                        <p><strong>Slogan:</strong> "Utiliser l'IA sans chichi !"</p>
+                        <p><strong>Description:</strong> Multi-AI collaborative platform made in Switzerland</p>
+                        <p><strong>Origine:</strong> 🇨🇭 Designed & Built in Switzerland</p>
+                        <p><strong>Qualité:</strong> Swiss precision, no bullshit approach</p>
+                        <p><strong>License:</strong> MIT (Open Source)</p>
+                    </div>
+
+                    <div class="about-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">4</div>
+                            <div class="stat-label">Fournisseurs IA</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Interfaces</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="stat-messages">0</div>
+                            <div class="stat-label">Messages envoyés</div>
+                        </div>
+                    </div>
+
+                    <div class="about-links">
+                        <a href="https://github.com/yourusername/chika" target="_blank" class="btn btn-secondary">
+                            GitHub Repository
+                        </a>
+                        <a href="#" class="btn btn-ghost">
+                            Documentation
+                        </a>
+                        <a href="#" class="btn btn-ghost">
+                            Changelog
+                        </a>
+                    </div>
+                </div>
+
+                <div class="setting-group card">
+                    <h3>Crédits</h3>
+                    <ul class="credits-list">
+                        <li>FastAPI - Backend framework</li>
+                        <li>LiteLLM - Unified LLM API</li>
+                        <li>D3.js - Graph visualization</li>
+                        <li>Design inspiré par Linear, Vercel, Arc</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading-overlay hidden">
+        <div class="loading-dots">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

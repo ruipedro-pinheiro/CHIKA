@@ -1,6 +1,7 @@
 """Configuration for Multi-AI System - Privacy-first, multi-provider setup"""
 from pydantic_settings import BaseSettings
-from typing import Optional, List
+from pydantic import field_validator
+from typing import Optional, List, Union
 
 class Settings(BaseSettings):
     """Application settings"""
@@ -13,13 +14,20 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./multi-ai-system.db"
     
     # CORS
-    cors_origins: List[str] = ["http://localhost:5173", "http://localhost:3000"]
+    cors_origins: Union[List[str], str] = ["http://localhost:5173", "http://localhost:3000"]
+    
+    @field_validator('cors_origins', mode='before')
+    @classmethod
+    def parse_cors_origins(cls, v):
+        if isinstance(v, str):
+            return [origin.strip() for origin in v.split(',')]
+        return v
     
     # LiteLLM Configuration (supports 100+ providers)
     # Priority: 1 = Try first (cheapest/local), 2 = Fallback (cloud)
     
     # Ollama (Local, Free, Privacy-first) - PRIORITY 1
-    ollama_base_url: str = "http://localhost:11434"
+    ollama_base_url: Optional[str] = None
     ollama_model: str = "llama2"  # or llama3, mistral, etc.
     
     # Claude (Fallback) - PRIORITY 2

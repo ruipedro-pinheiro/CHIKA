@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import DOMPurify from 'isomorphic-dompurify'
+import OAuthLogin from './components/OAuthLogin'
 
 const API_URL = '/api'
 
@@ -369,6 +370,8 @@ function RoomSettingsModal({ room, onClose, onUpdate }) {
 
 // Main App
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [checkingAuth, setCheckingAuth] = useState(true)
   const [rooms, setRooms] = useState([])
   const [currentRoom, setCurrentRoom] = useState(null)
   const [messages, setMessages] = useState([])
@@ -376,13 +379,32 @@ function App() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
-  const [selectedAIs, setSelectedAIs] = useState(['claude', 'gpt'])
+  const [selectedAIs, setSelectedAIs] = useState(['mock']) // Will be updated with available AIs
+  const [availableAIs, setAvailableAIs] = useState(['mock'])
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
   const [showSettings, setShowSettings] = useState(false)
   const [wsConnected, setWsConnected] = useState(false)
   const messagesEndRef = useRef(null)
   const ws = useRef(null)
+
+  // Check authentication status on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/oauth/status`)
+        const hasAuth = res.data.authenticated_providers?.length > 0
+        console.log('🔐 Auth check:', { hasAuth, providers: res.data.authenticated_providers })
+        setIsAuthenticated(hasAuth)
+      } catch (err) {
+        console.log('❌ No auth tokens found, showing login')
+        setIsAuthenticated(false)
+      } finally {
+        setCheckingAuth(false)
+      }
+    }
+    checkAuth()
+  }, [])
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -403,6 +425,26 @@ function App() {
       return () => clearTimeout(timer)
     }
   }, [success])
+
+  // Load available AIs on mount
+  useEffect(() => {
+    const loadAvailableAIs = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/`)
+        const ais = res.data.available_ais || ['mock']
+        setAvailableAIs(ais)
+        // Set default selected AIs to available ones
+        if (ais.length > 0) {
+          setSelectedAIs(ais)
+        }
+      } catch (error) {
+        console.error('Failed to load available AIs:', error)
+        setAvailableAIs(['mock'])
+        setSelectedAIs(['mock'])
+      }
+    }
+    loadAvailableAIs()
+  }, [])
 
   // Load rooms on mount
   useEffect(() => {
@@ -428,7 +470,7 @@ function App() {
     if (ws.current) ws.current.close()
     
     setWsConnected(false)
-    const wsUrl = `ws://localhost:8000/ws/${roomId}`
+    const wsUrl = `ws://${window.location.host}/ws/${roomId}`
     ws.current = new WebSocket(wsUrl)
     
     ws.current.onopen = () => {
@@ -439,7 +481,9 @@ function App() {
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data)
       if (data.type === 'new_messages') {
+        // Add both user and AI messages (no optimistic update anymore)
         setMessages(prev => [...prev, data.data.user_message, data.data.ai_message])
+        
         if (data.data.discussion) {
           setDiscussions(prev => ({
             ...prev,
@@ -466,6 +510,14 @@ function App() {
     try {
       const res = await axios.get(`${API_URL}/rooms`)
       setRooms(res.data)
+      
+      // AUTO-CREATE DEFAULT ROOM IF NONE EXISTS
+      if (res.data.length === 0) {
+        console.log('No rooms found, creating default room...')
+        await createRoom()
+        return // createRoom() will reload rooms
+      }
+      
       if (res.data.length > 0 && !currentRoom) {
         setCurrentRoom(res.data[0])
       }
@@ -525,14 +577,8 @@ function App() {
     setIsTyping(true)
     setIsLoading(true)
 
-    // Add user message optimistically
-    const userMsg = {
-      role: 'user',
-      author: 'user',
-      content: sanitizedInput,
-      timestamp: new Date().toISOString()
-    }
-    setMessages(prev => [...prev, userMsg])
+    // NO optimistic update - wait for WebSocket response
+    // This prevents duplicate messages
 
     try {
       await axios.post(`${API_URL}/chat`, {
@@ -544,13 +590,37 @@ function App() {
       console.error('Failed to send message:', error)
       setError(error.response?.data?.detail || 'Failed to send message')
       setIsTyping(false)
-      // Remove optimistic message on error
-      setMessages(prev => prev.filter(m => m !== userMsg))
     } finally {
       setIsLoading(false)
     }
   }
 
+  // Show loading while checking auth
+  if (checkingAuth) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-discord-darkest">
+        <div className="text-center">
+          <LoadingSpinner size="lg" />
+          <p className="mt-4 text-gray-400">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show OAuth login if not authenticated
+  if (!isAuthenticated) {
+    console.log('🚪 Showing login screen (not authenticated)')
+    return (
+      <OAuthLogin 
+        onSuccess={(msg) => {
+          setSuccess(msg)
+          setIsAuthenticated(true)
+        }}
+      />
+    )
+  }
+
+  // Main app (authenticated)
   return (
     <div className="h-screen flex bg-discord-darkest text-white">
       {/* Alerts */}

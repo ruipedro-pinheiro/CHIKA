@@ -1,0 +1,194 @@
+/* ZEN Custom Styles (complète le design system) */
+
+/* === LAYOUT === */
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* === HEADER === */
+.zen-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--bg-primary);
+    border-bottom: var(--border-width) solid var(--border-primary);
+    padding: var(--space-md);
+}
+
+.ai-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    cursor: grab;
+    user-select: none;
+    transition: transform var(--transition-base);
+}
+
+.ai-indicator:active {
+    cursor: grabbing;
+}
+
+.ai-avatar {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+}
+
+.ai-info {
+    flex: 1;
+}
+
+.ai-name {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--chika-primary);
+}
+
+.ai-status {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.swipe-hint {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    opacity: 0.5;
+}
+
+.theme-selector {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.btn-sm {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--text-sm);
+    min-width: 2rem;
+}
+
+.btn-circle {
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-full);
+    padding: 0;
+    flex-shrink: 0;
+}
+
+/* === MESSAGES === */
+.zen-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-xl);
+    padding-top: 6rem; /* Header height */
+    padding-bottom: 6rem; /* Input height */
+    scroll-behavior: smooth;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-tertiary);
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-md);
+    opacity: 0.5;
+}
+
+/* === INPUT === */
+.zen-input {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-primary);
+    border-top: var(--border-width) solid var(--border-primary);
+    padding: var(--space-md);
+}
+
+.zen-input form {
+    display: flex;
+    gap: var(--space-md);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.zen-input .input {
+    flex: 1;
+}
+
+/* === LOADING === */
+.zen-loading {
+    position: fixed;
+    bottom: 6rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+}
+
+/* === ANIMATIONS === */
+@keyframes swipe-left {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes swipe-right {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(10px); }
+    100% { transform: translateX(0); }
+}
+
+.ai-indicator.swipe-left {
+    animation: swipe-left 0.3s ease-out;
+}
+
+.ai-indicator.swipe-right {
+    animation: swipe-right 0.3s ease-out;
+}
+
+/* === SCROLLBAR === */
+.zen-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.zen-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.zen-messages::-webkit-scrollbar-thumb {
+    background: var(--border-secondary);
+    border-radius: var(--radius-full);
+}
+
+.zen-messages::-webkit-scrollbar-thumb:hover {
+    background: var(--chika-primary);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .zen-messages {
+        padding: var(--space-md);
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+    }
+    
+    .swipe-hint {
+        display: none;
+    }
+}

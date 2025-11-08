@@ -10,17 +10,17 @@ import json
 from datetime import datetime
 
 # Config & Models
-from backend.config import settings
-from backend.models.room import init_db, get_db, Room as DBRoom, Message as DBMessage
-from backend.providers.llm_router import LLMRouter
-from backend.room.manager import RoomManager
+from config import settings
+from models.room import init_db, get_db, Room as DBRoom, Message as DBMessage
+from providers.llm_router import LLMRouter
+from room.manager import RoomManager
 
 # Security
-from backend.security.input_sanitizer import InputSanitizer
-from backend.security.prompt_filter import PromptSecurityFilter
-from backend.security.secrets_manager import setup_secure_logging
-from backend.security.headers import SecurityHeadersMiddleware
-from backend.security.rate_limiter import setup_rate_limiting, check_rate_limit_middleware
+from security.input_sanitizer import InputSanitizer
+from security.prompt_filter import PromptSecurityFilter
+from security.secrets_manager import setup_secure_logging
+from security.headers import SecurityHeadersMiddleware
+from security.rate_limiter import setup_rate_limiting, check_rate_limit_middleware
 
 # Initialize FastAPI
 app = FastAPI(
@@ -45,8 +45,17 @@ setup_rate_limiting(app)
 # Initialize database
 init_db()
 
-# Initialize LLM Router
-llm_router = LLMRouter()
+# OAuth System (must be initialized BEFORE LLM Router)
+from auth.oauth_manager import OAuthManager
+from auth.token_store import TokenStore
+from auth.oauth_refresh import OAuthRefresher
+
+oauth_manager = OAuthManager()
+token_store = TokenStore()
+oauth_refresher = OAuthRefresher(oauth_manager, token_store)
+
+# Initialize LLM Router with OAuth support
+llm_router = LLMRouter(token_store=token_store, oauth_refresher=oauth_refresher)
 
 
 # === Pydantic Models === #
@@ -64,7 +73,7 @@ class RoomCreate(BaseModel):
     
     @validator('active_ais')
     def validate_ais(cls, v):
-        allowed_ais = ['claude', 'gpt', 'gemini', 'grok', 'ollama']
+        allowed_ais = ['claude', 'gpt', 'gemini', 'grok', 'ollama', 'mock']
         for ai in v:
             if ai not in allowed_ais:
                 raise ValueError(f"Invalid AI: {ai}. Allowed: {allowed_ais}")
@@ -329,6 +338,210 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
     
     except WebSocketDisconnect:
         manager.disconnect(websocket, room_id)
+
+
+# === OAuth Endpoints === #
+
+@app.get("/oauth/providers")
+async def list_oauth_providers():
+    """List all available OAuth providers
+    
+    Returns list of AI providers that support OAuth authentication
+    """
+    providers = oauth_manager.list_providers()
+    provider_info = []
+    
+    for provider_name in providers:
+        info = oauth_manager.get_provider_info(provider_name)
+        if info:
+            # Check if we have a valid token
+            has_token = token_store.is_token_valid(provider_name)
+            info["authenticated"] = has_token
+            provider_info.append(info)
+    
+    return {"providers": provider_info}
+
+
+@app.get("/oauth/authorize/{provider}")
+async def oauth_authorize(provider: str):
+    """Start OAuth flow for a provider
+    
+    Returns authorization URL for user to visit
+    """
+    if provider not in oauth_manager.PROVIDERS:
+        raise HTTPException(status_code=404, detail=f"Provider '{provider}' not found")
+    
+    # Redirect URI (Anthropic uses their own, others use our callback)
+    if provider == "anthropic":
+        redirect_uri = "https://console.anthropic.com/oauth/code/callback"
+    else:
+        redirect_uri = f"http://localhost:8000/oauth/callback/{provider}"
+    
+    try:
+        auth_url, state, _ = oauth_manager.get_authorization_url(
+            provider_name=provider,
+            redirect_uri=redirect_uri
+        )
+        
+        return {
+            "authorization_url": auth_url,
+            "state": state,
+            "provider": provider,
+            "redirect_uri": redirect_uri,
+            "instructions": "Copy the authorization code from the redirect URL" if provider == "anthropic" else "You will be redirected back automatically",
+            "message": f"Visit the authorization_url to authenticate with {provider}"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/oauth/callback/{provider}")
+async def oauth_callback(
+    provider: str,
+    code: Optional[str] = None,
+    state: Optional[str] = None,
+    error: Optional[str] = None
+):
+    """OAuth callback endpoint
+    
+    Called by OAuth provider after user authorizes
+    """
+    if error:
+        raise HTTPException(status_code=400, detail=f"OAuth error: {error}")
+    
+    if not code or not state:
+        raise HTTPException(status_code=400, detail="Missing code or state")
+    
+    try:
+        # Exchange code for token
+        token_data = await oauth_manager.exchange_code_for_token(
+            provider_name=provider,
+            code=code,
+            state=state
+        )
+        
+        # Store tokens
+        token_store.store_token(
+            provider=provider,
+            access_token=token_data["access_token"],
+            refresh_token=token_data.get("refresh_token"),
+            expires_in=token_data.get("expires_in")
+        )
+        
+        return {
+            "success": True,
+            "provider": provider,
+            "message": f"Successfully authenticated with {provider}!",
+            "expires_in": token_data.get("expires_in")
+        }
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Token exchange failed: {str(e)}")
+
+
+
+@app.post("/oauth/exchange-code/{provider}")
+async def oauth_exchange_manual_code(
+    provider: str,
+    code: str,
+    state: str
+):
+    """Manually exchange OAuth code for token (for Anthropic manual flow)
+    
+    Body:
+        code: Authorization code from OAuth provider
+        state: State parameter from authorization URL
+    """
+    try:
+        # Exchange code for token
+        token_data = await oauth_manager.exchange_code_for_token(
+            provider_name=provider,
+            code=code,
+            state=state
+        )
+        
+        # Store tokens
+        token_store.store_token(
+            provider=provider,
+            access_token=token_data["access_token"],
+            refresh_token=token_data.get("refresh_token"),
+            expires_in=token_data.get("expires_in")
+        )
+        
+        return {
+            "success": True,
+            "provider": provider,
+            "message": f"Successfully authenticated with {provider}!",
+            "expires_in": token_data.get("expires_in")
+        }
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/oauth/refresh/{provider}")
+async def oauth_refresh(provider: str):
+    """Manually refresh OAuth token for a provider"""
+    refresh_token = token_store.get_refresh_token(provider)
+    
+    if not refresh_token:
+        raise HTTPException(status_code=404, detail=f"No refresh token found for {provider}")
+    
+    try:
+        token_data = await oauth_manager.refresh_access_token(
+            provider_name=provider,
+            refresh_token=refresh_token
+        )
+        
+        # Update stored tokens
+        token_store.store_token(
+            provider=provider,
+            access_token=token_data["access_token"],
+            refresh_token=token_data.get("refresh_token", refresh_token),
+            expires_in=token_data.get("expires_in")
+        )
+        
+        return {
+            "success": True,
+            "provider": provider,
+            "message": f"Token refreshed for {provider}"
+        }
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Token refresh failed: {str(e)}")
+
+
+@app.delete("/oauth/disconnect/{provider}")
+async def oauth_disconnect(provider: str):
+    """Disconnect (remove token) for a provider"""
+    token_store.remove_token(provider)
+    
+    return {
+        "success": True,
+        "provider": provider,
+        "message": f"Disconnected from {provider}"
+    }
+
+
+@app.get("/oauth/status")
+async def oauth_status():
+    """Get OAuth status for all providers"""
+    all_providers = oauth_manager.list_providers()
+    authenticated_providers = token_store.list_providers()
+    
+    status = []
+    for provider in all_providers:
+        is_authed = provider in authenticated_providers
+        status.append({
+            "provider": provider,
+            "authenticated": is_authed,
+            "token_valid": token_store.is_token_valid(provider) if is_authed else False
+        })
+    
+    return {
+        "providers": status,
+        "authenticated_providers": authenticated_providers
+    }
 
 
 if __name__ == "__main__":

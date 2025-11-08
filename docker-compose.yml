@@ -1,25 +1,113 @@
+version: '3.8'
+
 services:
+  # === BACKEND ===
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: chika-backend
     ports:
       - "8000:8000"
-    env_file: .env
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003
     volumes:
-      - chika-data:/data
+      - ./backend:/app
+      - ./data/tokens:/app/data/tokens
+      - ./data/rooms:/app/data/rooms
     networks:
-      - chika
+      - chika-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  frontend:
-    build: ./frontend
+  # === FRONTEND HOME (Landing Page) ===
+  frontend-home:
+    image: nginx:alpine
+    container_name: chika-frontend-home
     ports:
       - "3000:80"
+    volumes:
+      - ./frontend-home:/usr/share/nginx/html:ro
+      - ./design-system:/usr/share/nginx/html/design-system:ro
+      - ./nginx/home.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - chika-network
+    restart: unless-stopped
     depends_on:
       - backend
-    networks:
-      - chika
 
-volumes:
-  chika-data:
+  # === FRONTEND ZEN ===
+  frontend-zen:
+    image: nginx:alpine
+    container_name: chika-frontend-zen
+    ports:
+      - "3001:80"
+    volumes:
+      - ./frontend-zen:/usr/share/nginx/html:ro
+      - ./design-system:/usr/share/nginx/html/design-system:ro
+      - ./nginx/zen.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - chika-network
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+  # === FRONTEND ARENA ===
+  frontend-arena:
+    image: nginx:alpine
+    container_name: chika-frontend-arena
+    ports:
+      - "3002:80"
+    volumes:
+      - ./frontend-arena:/usr/share/nginx/html:ro
+      - ./design-system:/usr/share/nginx/html/design-system:ro
+      - ./nginx/arena.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - chika-network
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+  # === FRONTEND CARDS ===
+  frontend-cards:
+    image: nginx:alpine
+    container_name: chika-frontend-cards
+    ports:
+      - "3003:80"
+    volumes:
+      - ./frontend-cards:/usr/share/nginx/html:ro
+      - ./design-system:/usr/share/nginx/html/design-system:ro
+      - ./nginx/cards.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - chika-network
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+  # === REDIS (Cache & Session) ===
+  redis:
+    image: redis:7-alpine
+    container_name: chika-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - chika-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
 
 networks:
-  chika:
+  chika-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local

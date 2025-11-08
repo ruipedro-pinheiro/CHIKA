@@ -10,8 +10,8 @@ from typing import List, Dict, Optional
 from datetime import datetime
 import uuid
 
-from backend.models.room import Room, Message, AIDiscussion, get_db
-from backend.orchestrator.collaborator import AICollaborator
+from models.room import Room, Message, AIDiscussion, get_db
+from orchestrator.collaborator import AICollaborator
 
 
 class RoomManager:
@@ -84,7 +84,7 @@ class RoomManager:
             Message object
         """
         # Extract mentions
-        from backend.orchestrator.collaborator import AICollaborator
+        from orchestrator.collaborator import AICollaborator
         mentions = AICollaborator(None, None)._extract_mentions(content)
         
         message = Message(

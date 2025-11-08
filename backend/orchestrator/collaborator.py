@@ -185,7 +185,7 @@ Be constructive and specific.
                 'messages': List[Dict]
             }
         """
-        from backend.models.room import AIDiscussion
+        from models.room import AIDiscussion
         
         # Create discussion record
         discussion = AIDiscussion(
