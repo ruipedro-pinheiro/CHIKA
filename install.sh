@@ -35,6 +35,36 @@ if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/
     exit 1
 fi
 
+# Check Docker permissions
+if ! docker ps &> /dev/null; then
+    echo "⚠️  Docker permission issue detected"
+    
+    if ! groups | grep -q docker; then
+        echo "🔧 Adding user to docker group..."
+        sudo usermod -aG docker $USER
+        echo "✅ Added to docker group!"
+    fi
+    
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "⚠️  IMPORTANT: Group changes applied!"
+    echo ""
+    echo "To complete the installation, run ONE of:"
+    echo ""
+    echo "  Option 1 (Quick - current shell):"
+    echo "    newgrp docker <<EOF"
+    echo "curl -fsSL https://raw.githubusercontent.com/ruipedro-pinheiro/multi-ai-system/main/install.sh | bash"
+    echo "EOF"
+    echo ""
+    echo "  Option 2 (Permanent):"
+    echo "    Logout/login, then re-run:"
+    echo "    curl -fsSL https://raw.githubusercontent.com/ruipedro-pinheiro/multi-ai-system/main/install.sh | bash"
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    exit 0
+fi
+
 echo "✅ All prerequisites met!"
 echo ""
 
