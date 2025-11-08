@@ -2020,12 +2020,20 @@
                 addHeroMessage('user', message);
                 input.value = '';
                 
-                // Show loading
+                // Show contextual status messages
                 const loadingId = 'loading-' + Date.now();
-                addHeroMessage('system', 'Thinking...', loadingId);
+                addHeroMessage('system', '🔍 Analyzing your question...', loadingId);
                 
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
+                
+                // Update status: Selecting AIs
+                setTimeout(() => {
+                    const loadingEl = document.getElementById(loadingId);
+                    if (loadingEl) {
+                        loadingEl.querySelector('div').textContent = '🤖 SmartRouter selecting best AIs...';
+                    }
+                }, 500);
                 
                 const response = await fetch('https://jade-received-montreal-titans.trycloudflare.com/chat', {
                     method: 'POST',
@@ -2038,6 +2046,12 @@
                 
                 clearTimeout(timeoutId);
                 
+                // Update status: Getting responses
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) {
+                    loadingEl.querySelector('div').textContent = '💬 AIs collaborating...';
+                }
+                
                 if (!response.ok) {
                     const errorText = await response.text().catch(() => 'Unknown error');
                     throw new Error(`Backend error (${response.status}): ${errorText}`);
@@ -2046,6 +2060,13 @@
                 const data = await response.json().catch(() => {
                     throw new Error('Invalid JSON response from backend');
                 });
+                
+                // Update status: Synthesizing
+                if (loadingEl) {
+                    loadingEl.querySelector('div').textContent = '✨ Synthesizing final answer...';
+                }
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
                 
                 // Remove loading
                 document.getElementById(loadingId)?.remove();
