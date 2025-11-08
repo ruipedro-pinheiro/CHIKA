@@ -1,0 +1,25 @@
+# Core API
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-dotenv==1.0.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+websockets==12.0
+
+# LLM Gateway
+litellm>=1.41.24
+
+# Database
+sqlalchemy==2.0.23
+
+# Security
+bleach==6.1.0
+validators==0.22.0
+python-multipart==0.0.6
+
+# Utils
+httpx==0.25.1
+
+# CLI/TUI
+textual==0.47.0
+rich==13.7.0
