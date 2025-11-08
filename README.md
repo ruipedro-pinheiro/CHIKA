@@ -1,290 +1,353 @@
-# 🇨🇭 Chika - Swiss-Made Multi-AI Platform
+# 🇨🇭 CHIKA - Multi-AI Collaboration Platform
 
-> **"Utiliser l'IA sans chichi !"**
+> **The OS for your AIs. Stop switching. Let them collaborate.**
 
-**Multi-AI collaborative platform made in Switzerland** - Connectez Claude, GPT-4, Gemini et plus encore dans un seul espace de travail unifié. **Qualité suisse, simplicité garantie.**
-
-## 🏆 Quality Badges (Externally Verified)
-
-### Security
-[![Security Headers](https://img.shields.io/badge/Security-A+-success)](https://securityheaders.com/)
-[![SSL Labs](https://img.shields.io/badge/SSL-A+-success)](https://www.ssllabs.com/)
-[![Mozilla Observatory](https://img.shields.io/badge/Observatory-A+-success)](https://observatory.mozilla.org/)
-[![Vulnerabilities](https://img.shields.io/badge/Vulnerabilities-0-success)](https://snyk.io/)
-
-### Performance
-[![PageSpeed](https://img.shields.io/badge/PageSpeed-95+-success)](https://pagespeed.web.dev/)
-[![GTmetrix](https://img.shields.io/badge/GTmetrix-A-success)](https://gtmetrix.com/)
-[![Load Time](https://img.shields.io/badge/Load%20Time-%3C1s-success)]()
-
-### Quality
-[![W3C HTML](https://img.shields.io/badge/W3C%20HTML-Valid-success)](https://validator.w3.org/)
-[![W3C CSS](https://img.shields.io/badge/W3C%20CSS-Valid-success)](https://jigsaw.w3.org/css-validator/)
-[![Accessibility](https://img.shields.io/badge/Accessibility-AAA-success)](https://wave.webaim.org/)
-[![Mobile Friendly](https://img.shields.io/badge/Mobile-Friendly-success)](https://search.google.com/test/mobile-friendly)
-
-### Development
-[![Swiss-Made](https://img.shields.io/badge/Swiss--Made-🇨🇭-red)]()
-[![Tests](https://img.shields.io/badge/Tests-47%20Pass-success)]()
-[![Coverage](https://img.shields.io/badge/Coverage-92%25-success)]()
-[![License](https://img.shields.io/badge/License-MIT-green)]()
-
-**→ [View All Public Audits](./frontend-home/audits.html)** | **[Run Your Own Tests](./EXTERNAL-AUDITS.md)**
-
-[![Production Ready](https://img.shields.io/badge/Status-Production%20Ready-success)]()
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue)]()
-[![License](https://img.shields.io/badge/License-MIT-green)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ---
 
-## 🚀 Quick Start (One Command!)
+## 🎯 What is CHIKA?
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/ruipedro-pinheiro/multi-ai-system/main/install.sh | bash
+CHIKA is a multi-AI orchestration platform that makes your AIs collaborate like a real team.
+
+**Instead of:**
+- Switching between ChatGPT, Claude, Gemini
+- Copy-pasting context everywhere
+- Losing conversation history
+
+**You get:**
+- Automatic AI selection based on your need
+- Real-time collaboration between AIs
+- Unlimited memory (never forget context)
+- Your own API keys (you keep control)
+
+---
+
+## 🔥 The Problem
+
+```
+You on Claude.ai:
+"Write me a Python backup script"
+→ Claude responds ✅
+
+You on ChatGPT:
+"Is this RGPD compliant?"
+→ ChatGPT: "What script?" ❌
+→ You must copy-paste → ANNOYING!
+
+You back on Claude 2 days later:
+"Improve the script"
+→ Claude forgot (new session) ❌
+→ You must re-explain everything → TIME WASTE!
 ```
 
-That's it! Open http://localhost:3000 🎉
+**You pay $40/month (Claude Pro + ChatGPT Plus) for tools that don't talk to each other.**
 
 ---
 
-## ✨ Features
+## 💡 The Solution
 
-- 🤖 **Multi-IA Natif** - Claude, GPT-4, Gemini, Ollama support
-- 🔒 **OAuth Sécurisé** - OAuth2/PKCE avec refresh tokens automatique  
-- 💬 **Contexte Partagé** - Les IA collaborent en temps réel
-- ⚡ **WebSocket Streaming** - Réponses instantanées
-- 🎨 **Design System** - Interface cohérente et moderne sur 3 frontends
-- 🚀 **3 Interfaces** - Zen (minimal), Arena (graphe interactif), Cards (Kanban)
-- 🔐 **Sécurité Hardcore** - Rate limiting, input sanitization, CORS strict
-- 🐳 **Docker Ready** - Déploiement one-command
+```
+You: "Python backup script with crontab"
+
+CHIKA automatically:
+→ Analyzes: "python script" = needs CODE expert
+→ Analyzes: "crontab" = needs SYSADMIN expert
+→ Analyzes: "backup" = needs RGPD check
+
+🤖 Claude (Code Expert):
+"I'll code it. @Gemini check RGPD? @ChatGPT creative alternatives?"
+
+✨ Gemini (Legal Expert):
+"RGPD OK if AES-256 encryption + retention <30 days"
+
+🧠 ChatGPT (Creative Expert):
+"Alternative: use systemd timer instead of cron (better logging)"
+
+🤖 Claude:
+"@You Here's your script:
+✅ Auto backup with encryption (RGPD compliant)
+✅ systemd timer (modern approach)
+Ready to use!"
+```
+
+**Result:** 1 question → 3 AIs collaborate → Best possible solution!
 
 ---
 
-## 🎨 Interfaces
+## 🚀 Key Features
 
-| Interface | URL | Description |
-|-----------|-----|-------------|
-| **🏠 Home** | http://localhost:3000 | Landing page - Choix interface |
-| **🧘 Zen** | http://localhost:3001 | Chat minimal - Swipe entre IA |
-| **🔀 Arena** | http://localhost:3002 | Graphe interactif D3.js |
-| **📋 Cards** | http://localhost:3003 | Kanban workflow - Drag & drop |
-| **⚙️ Backend** | http://localhost:8000 | API & WebSocket |
+### 🧠 SmartRouter
+Automatic AI selection based on your message:
+- "Python code bug" → Claude (code expert)
+- "RGPD compliance" → Gemini (legal expert)
+- "Creative blog post" → ChatGPT (creative expert)
+- "Script + RGPD + alternatives" → All 3 together!
 
-### 🧘 Zen Mode
-**Minimal distraction-free chat**
-- One input, one AI at a time
-- Swipe gauche/droite pour changer d'IA
-- Thèmes light (λ) et dark ({ })
-- Perfect pour travail concentré
+### 🤝 Native Collaboration
+AIs discuss together like a team:
+- Claude proposes code
+- Gemini checks security
+- ChatGPT suggests improvements
+- If disagreement → private discussion until consensus
 
-### 🔀 Arena Mode  
-**Visual conversation graph**
-- Graphe interactif D3.js
-- Multi-IA simultané (query plusieurs IA en même temps)
-- Drag & zoom navigation
-- Explorez relations entre questions/réponses
+### 💾 Unlimited Memory
+**ChatGPT/Claude:** Forget after X messages
 
-### 📋 Cards Mode
-**Kanban workflow**
-- Drag & drop task cards entre colonnes
-- 4 colonnes: To Do → In Progress → Review → Done
-- Assignez tâches à des IA spécifiques
-- Suivi avancement visuel
+**CHIKA PRO:** Never forgets!
+
+```
+Day 1: "Explain JavaScript closures"
+Day 30: "Give me closure example from before"
+→ CHIKA REMEMBERS! ✅
+```
+
+### 🔐 You Keep Control
+**Freemium:** Our free AIs (Gemini, Llama, Mixtral)
+
+**PRO:** YOUR AIs!
+- Connect your Claude Max (OAuth)
+- Connect your ChatGPT Plus (API key)
+- Connect any AI you want
+
+**Privacy:** Your keys = your data. We don't store anything.
 
 ---
 
 ## 🏗️ Architecture
 
-```
-Chika
-├── Backend (FastAPI + WebSocket)
-│   ├── Multi-AI Orchestrator
-│   ├── LiteLLM Router (100+ providers)
-│   ├── Security Hardened
-│   └── SQLite Database
-│
-├── Frontend (React + Vite)
-│   ├── Discord-style UI
-│   ├── Real-time updates
-│   └── Markdown support
-│
-└── CLI (Python Textual)
-    └── Terminal interface
-```
-
----
-
-## 💡 Example Workflow
-
-```
-You: "@claude I need help with a Rust app"
-
-[💭 Claude is thinking...]
-
-Claude: "Sure! What kind of app?"
-
-You: "@claude @gpt Can you both review this design?"
-
-[💬 Private discussion: Claude & GPT]
-Claude: "I suggest async/await"
-GPT: "I disagree, sync is simpler here"
-Claude: "Good point, I agree"
-✅ Consensus reached
-
-GPT: "@You We agree: use sync approach because..."
-```
-
----
-
-## 🔧 Configuration
-
-Edit `.env`:
-
-```bash
-# Optional AI providers (Ollama works without keys)
-ANTHROPIC_API_KEY=your_key
-OPENAI_API_KEY=your_key
-GOOGLE_API_KEY=your_key
-
-# Local AI (free!)
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama2
-```
-
----
-
-## 📊 Tech Stack
-
-- **Backend:** Python 3.11, FastAPI, LiteLLM, SQLAlchemy
-- **Frontend:** React 18, Vite, TailwindCSS, ReactMarkdown
-- **CLI:** Python Textual, Rich
-- **Deploy:** Docker, Docker Compose
-- **Security:** Custom hardening (701 lines)
-
----
-
-## 🧪 Development
-
 ### Backend
-```bash
-cd backend
-pip install -r requirements.txt
-python main.py
+```
+FastAPI (Python 3.11+)
+├── SmartRouter (intent analysis + AI selection)
+├── AICollaborator (multi-AI coordination)
+├── AI Personas (identity system - each AI knows who it is)
+├── Context Manager (unlimited memory)
+├── OAuth2 (Anthropic reverse-engineered)
+└── LiteLLM (100+ providers support)
 ```
 
 ### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
+```
+Vanilla JS (max performance)
+├── Zen Mode (focused conversation)
+├── Arena Mode (compare AI responses)
+├── Cards Mode (knowledge base)
+└── Settings (OAuth/API keys management)
 ```
 
-### Tests
-```bash
-cd backend
-pip install -r requirements-dev.txt
-pytest
+### Infrastructure
+```
+Docker Compose
+├── FastAPI backend
+├── PostgreSQL (production) / SQLite (dev)
+├── Qdrant (vector DB for RAG - future)
+└── Nginx (reverse proxy)
 ```
 
 ---
 
-## 🐳 Docker
+## 🚀 Quick Start
 
-### Production
+### Prerequisites
+- Python 3.11+
+- Docker & Docker Compose
+- API keys (at least one):
+  - Google AI Studio (Gemini - free)
+  - Groq (Llama/Mixtral - free)
+  - OpenAI API key
+  - Anthropic API key
+
+### Installation
+
 ```bash
+# Clone repo
+git clone https://github.com/ruipedro-pinheiro/multi-ai-system.git
+cd multi-ai-system
+
+# Copy .env.example
+cp .env.example .env
+
+# Add your API keys in .env
+GOOGLE_API_KEY=your_key_here
+GROQ_API_KEY=your_key_here
+
+# Run with Docker
 docker-compose up -d
+
+# Or run locally
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cd backend && uvicorn main:app --reload
 ```
 
-### Development with hot-reload
-```bash
-docker-compose -f docker-compose.dev.yml up
-```
-
-### View logs
-```bash
-docker-compose logs -f
-```
-
-### Stop
-```bash
-docker-compose down
-```
+### Access
+- **Frontend:** http://localhost:3000
+- **Backend API:** http://localhost:8000
+- **API Docs:** http://localhost:8000/docs
 
 ---
 
-## 🔒 Security
+## 📖 Documentation
 
-- ✅ Input sanitization (XSS, SQL injection, path traversal)
-- ✅ Prompt injection filtering (30+ patterns)
-- ✅ Rate limiting (10 req/min)
-- ✅ CORS strict
-- ✅ Secrets redaction in logs
-- ✅ DOMPurify frontend
-- ✅ Non-root Docker containers
+- **[PITCH.md](PITCH.md)** - Full product pitch (tech + non-tech)
+- **[FREEMIUM_SETUP.md](FREEMIUM_SETUP.md)** - How to get free API keys
+- **[VALIDATION_ROADMAP.md](VALIDATION_ROADMAP.md)** - Market validation plan
+- **[RAPPORT_ANALYSE_COMPLETE.md](RAPPORT_ANALYSE_COMPLETE.md)** - Deep technical analysis
 
----
-
-## 📝 Project Stats
-
-- **2805 lines** of code
-- **701 lines** security hardening
-- **742 lines** polished React UI
-- **50 lines** CLI/TUI
-- **100+ AI providers** supported
+### Technical Docs
+- **[backend/](backend/)** - Backend architecture & code
+- **[frontend-zen/](frontend-zen/)** - Zen Mode interface
+- **[frontend-settings/](frontend-settings/)** - Settings interface
+- **[design-system/](design-system/)** - Design system & branding
 
 ---
 
-## 🎯 Use Cases
+## 🎯 Roadmap
 
-### For Developers
-```
-You: "Help me optimize this algorithm"
-→ Claude implements
-→ GPT reviews
-→ Gemini optimizes
-→ You get best solution
-```
+### V1 (Current - Q1 2026)
+- [x] SmartRouter (intent analysis)
+- [x] Multi-AI collaboration
+- [x] Freemium support (Gemini + Groq)
+- [x] AI Personas (identity system)
+- [x] Context Manager (unlimited memory)
+- [ ] Frontend Zen Mode refactor
+- [ ] OAuth flow completion
+- [ ] Beta launch
 
-### For Researchers
-```
-You: "Analyze this data"
-→ Multiple AI perspectives
-→ Cross-checking results
-→ Consensus on findings
-```
+### V2 (Q2-Q3 2026)
+- [ ] RAG with Qdrant (upload docs/code)
+- [ ] Session management
+- [ ] TUI (terminal interface)
+- [ ] Plugins system
+- [ ] VS Code extension
 
-### For Teams
-```
-You: "Design this feature"
-→ AIs collaborate
-→ Debate approaches
-→ Present unified solution
-```
+### V3 (Q4 2026 - 2027)
+- [ ] Mobile app
+- [ ] Public API
+- [ ] Marketplace plugins
+- [ ] Enterprise features (SSO, audit logs)
+
+---
+
+## 💰 Pricing (Planned)
+
+### Freemium - $0
+- Gemini 2.0 Flash (free Google)
+- Llama 3.1 70B (free Groq)
+- Mixtral 8x7B (free Groq)
+- Multi-AI collaboration
+- Context limited: 50 messages
+
+### PRO - $20/month
+- Connect YOUR AIs (OAuth/API keys)
+- Unlimited memory
+- Unlimited sessions
+- Advanced settings
+- Priority support
+
+### Enterprise - Custom
+- Self-hosted (your infrastructure)
+- SSO/SAML
+- Custom branding
+- Dedicated support
+- SLA guaranteed
 
 ---
 
 ## 🤝 Contributing
 
-Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+### Development
+
+```bash
+# Install dev dependencies
+pip install -r requirements-dev.txt
+
+# Run tests
+pytest
+
+# Code formatting
+black backend/
+isort backend/
+
+# Linting
+flake8 backend/
+mypy backend/
+```
 
 ---
 
-## 📄 License
+## 🔐 Security
 
-MIT License - See [LICENSE](LICENSE)
+- Input sanitization (XSS, SQL injection)
+- Prompt injection protection
+- Rate limiting (10 req/min)
+- OAuth2 PKCE flow
+- Encrypted token storage
 
----
-
-## 🙏 Credits
-
-Built with ❤️ by Pedro
-
-Powered by:
-- [FastAPI](https://fastapi.tiangolo.com/)
-- [React](https://react.dev/)
-- [LiteLLM](https://github.com/BerriAI/litellm)
-- [Textual](https://textual.textualize.io/)
+Report vulnerabilities: security@chika.app
 
 ---
 
-**🎯 Chika - Utiliser dix IA sans chichi**
+## 📊 Status
+
+- **Version:** 1.0.0-beta
+- **Status:** Pre-launch validation
+- **Backend:** Production-ready
+- **Frontend:** In development
+- **Launch:** Q1 2026 (planned)
+
+### Current Metrics
+- GitHub Stars: 0 (just launched!)
+- Beta Users: 0 (accepting applications)
+- Waitlist: [Join here](https://chika.app)
+
+---
+
+## 📞 Contact
+
+- **Website:** chika.app (coming soon)
+- **Email:** pedro@chika.app
+- **GitHub:** [@ruipedro-pinheiro](https://github.com/ruipedro-pinheiro)
+- **Twitter:** @chika_ai (coming soon)
+
+---
+
+## ⚖️ License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+**Core:** Open source (MIT)  
+**Enterprise:** Commercial license available
+
+---
+
+## 🙏 Acknowledgments
+
+- **Anthropic** - Claude API & OAuth flow inspiration
+- **OpenAI** - ChatGPT & API design patterns
+- **Google** - Gemini 2.0 Flash (free tier ❤️)
+- **Groq** - Ultra-fast inference (free tier ❤️)
+- **LiteLLM** - Universal LLM gateway
+- **FastAPI** - Best Python web framework
+- **42 Network** - Community & feedback
+
+---
+
+## 🇨🇭 Made in Switzerland
+
+**Philosophy:**
+- 🎯 Simple, no bullshit
+- 🔐 Privacy-first
+- 🛠️ Open source core
+- 💪 Self-hostable
+- 🧠 Actually intelligent (not just marketing)
+
+---
+
+**CHIKA - Stop switching. Let your AIs collaborate.** 🚀
