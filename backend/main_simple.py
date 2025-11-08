@@ -260,27 +260,21 @@ async def chat(chat_request: ChatRequest, request: Request):
 # === EMAIL HELPER === #
 
 def send_welcome_email(email: str, entry_id: int):
-    """Send welcome email via Gmail SMTP - BACKGROUND TASK!"""
+    """Send welcome email via Mailgun API - BACKGROUND TASK!"""
     # Create NEW DB session for background task (important!)
     from database import SessionLocal
+    import requests
     db = SessionLocal()
     
     try:
-        # Gmail credentials from environment
-        gmail_user = os.getenv('GMAIL_USER', 'pedroyverdon@gmail.com')
-        gmail_password = os.getenv('GMAIL_APP_PASSWORD')
+        # Mailgun credentials from environment
+        mailgun_api_key = os.getenv('MAILGUN_API_KEY')
+        mailgun_domain = os.getenv('MAILGUN_DOMAIN')
         
-        if not gmail_password:
-            print(f"⚠️ GMAIL_APP_PASSWORD not set. Email not sent to {email}")
-            print(f"   Generate one at: https://myaccount.google.com/apppasswords")
+        if not mailgun_api_key or not mailgun_domain:
+            print(f"⚠️ Mailgun not configured. Email not sent to {email}")
             db.close()
             return
-        
-        # Create email message
-        msg = MIMEMultipart('alternative')
-        msg['From'] = f"CHIKA <{gmail_user}>"
-        msg['To'] = email
-        msg['Subject'] = 'Welcome to CHIKA Beta! 🚀'
         
         html = f"""
         <html>
@@ -314,22 +308,31 @@ def send_welcome_email(email: str, entry_id: int):
         </html>
         """
         
-        msg.attach(MIMEText(html, 'html'))
+        # Send via Mailgun API
+        print(f"📧 Sending email to {email} via Mailgun...")
+        response = requests.post(
+            f"https://api.mailgun.net/v3/{mailgun_domain}/messages",
+            auth=("api", mailgun_api_key),
+            data={
+                "from": f"CHIKA <postmaster@{mailgun_domain}>",
+                "to": email,
+                "subject": "Welcome to CHIKA Beta! 🚀",
+                "html": html
+            },
+            timeout=10
+        )
         
-        # Send via Gmail SMTP
-        print(f"📧 Sending email to {email}...")
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=10) as server:
-            server.login(gmail_user, gmail_password)
-            server.send_message(msg)
-        
-        print(f"✅ Welcome email sent to {email} via Gmail SMTP")
-        
-        # Mark as sent in database (fetch fresh entry)
-        entry = db.query(WaitlistEntry).filter(WaitlistEntry.id == entry_id).first()
-        if entry:
-            entry.email_sent = True  # type: ignore
-            entry.email_sent_at = datetime.utcnow()  # type: ignore
-            db.commit()
+        if response.status_code == 200:
+            print(f"✅ Welcome email sent to {email} via Mailgun")
+            
+            # Mark as sent in database
+            entry = db.query(WaitlistEntry).filter(WaitlistEntry.id == entry_id).first()
+            if entry:
+                entry.email_sent = True  # type: ignore
+                entry.email_sent_at = datetime.utcnow()  # type: ignore
+                db.commit()
+        else:
+            print(f"❌ Mailgun error: {response.status_code} - {response.text}")
         
     except Exception as e:
         print(f"❌ Email failed for {email}: {e}")
