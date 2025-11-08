@@ -1133,97 +1133,52 @@
                 One interface. Better answers.
             </p>
 
-            <!-- Live Interactive Demo Preview -->
-            <div class="demo-preview" style="position: relative; background: var(--bg-card); border-radius: var(--radius-lg); padding: var(--space-lg); border: 2px solid var(--chika-primary); box-shadow: var(--shadow-glow);">
-                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
-                    <!-- Demo Header -->
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: var(--space-sm); border-bottom: 1px solid var(--bg-hover);">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <img src="chika-mascot.svg" alt="CHIKA" style="width: 24px; height: 24px;">
-                            <span style="font-weight: 600; color: var(--chika-primary);">LIVE Demo</span>
+            <!-- Compact Interactive Demo -->
+            <div class="demo-preview" style="max-width: 800px; margin: 0 auto; background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05)); border-radius: 16px; padding: 32px; border: 1px solid rgba(99, 102, 241, 0.2);">
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <!-- Quick Preview -->
+                    <div style="text-align: center;">
+                        <div style="display: inline-flex; align-items: center; gap: 8px; background: var(--bg-card); padding: 8px 16px; border-radius: 20px; margin-bottom: 16px;">
+                            <span style="width: 6px; height: 6px; background: var(--chika-accent); border-radius: 50%; animation: pulse 2s infinite;"></span>
+                            <span style="font-size: 0.875rem; font-weight: 600; color: var(--chika-accent);">Live AI Demo</span>
                         </div>
-                        <span style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: var(--chika-accent);">
-                            <span style="width: 8px; height: 8px; background: var(--chika-accent); border-radius: 50%; animation: pulse 2s infinite;"></span>
-                            Real AIs responding
-                        </span>
-                    </div>
-                    
-                    <!-- Quick Demo Messages -->
-                    <div style="display: flex; flex-direction: column; gap: var(--space-sm); max-height: 300px; overflow-y: auto;">
-                        <!-- User Message -->
-                        <div style="display: flex; justify-content: flex-end;">
-                            <div style="background: var(--chika-primary); color: white; padding: 12px 16px; border-radius: 12px; max-width: 70%;">
-                                Tell me a quick fun fact about space
-                            </div>
-                        </div>
-                        
-                        <!-- AI 1 Response -->
-                        <div style="display: flex; gap: 12px; align-items: start;">
-                            <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i data-lucide="cpu" style="width: 18px; height: 18px; color: white;"></i>
-                            </div>
-                            <div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">GPT-4</div>
-                                <div style="background: var(--bg-hover); padding: 12px 16px; border-radius: 12px; max-width: 85%;">
-                                    A day on Venus is longer than a year on Venus! It takes 243 Earth days to rotate once, but only 225 Earth days to orbit the Sun.
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- AI 2 Response -->
-                        <div style="display: flex; gap: 12px; align-items: start;">
-                            <div style="background: linear-gradient(135deg, #10b981, #059669); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i data-lucide="sparkles" style="width: 18px; height: 18px; color: white;"></i>
-                            </div>
-                            <div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">Gemini</div>
-                                <div style="background: var(--bg-hover); padding: 12px 16px; border-radius: 12px; max-width: 85%;">
-                                    Building on that - Venus also rotates in the opposite direction to most planets! If you could stand on Venus, the Sun would rise in the west and set in the east.
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- AI 3 Response -->
-                        <div style="display: flex; gap: 12px; align-items: start;">
-                            <div style="background: linear-gradient(135deg, #f59e0b, #d97706); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i data-lucide="bot" style="width: 18px; height: 18px; color: white;"></i>
-                            </div>
-                            <div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">Claude</div>
-                                <div style="background: var(--bg-hover); padding: 12px 16px; border-radius: 12px; max-width: 85%;">
-                                    And here's the kicker - Venus's atmosphere is so dense and moves so fast that despite the slow rotation, the upper atmosphere circles the planet in just 4 Earth days! This creates hurricane-force winds.
-                                </div>
-                            </div>
-                        </div>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0;">
+                            Multiple AIs collaborate on your question. Watch them build on each other's answers.
+                        </p>
                     </div>
                     
                     <!-- Interactive Input -->
-                    <div style="padding-top: var(--space-sm); border-top: 1px solid var(--bg-hover);">
-                        <div style="display: flex; gap: 12px; align-items: center;">
-                            <input 
-                                type="text" 
-                                id="hero-prompt-input"
-                                placeholder="Ask me anything... (e.g., 'Explain quantum computing simply')"
-                                style="flex: 1; background: var(--bg-input); border: 2px solid var(--bg-hover); border-radius: 12px; padding: 14px 20px; color: var(--text-primary); font-size: 1rem; transition: all 0.2s;"
-                                onfocus="this.style.borderColor='var(--chika-primary)'"
-                                onblur="this.style.borderColor='var(--bg-hover)'"
-                                onkeypress="if(event.key==='Enter') openChatWithPrompt()"
-                            />
-                            <button 
-                                onclick="openChatWithPrompt()" 
-                                class="btn btn-primary"
-                                style="padding: 14px 28px; display: flex; align-items: center; gap: 8px; white-space: nowrap;"
-                            >
-                                <i data-lucide="send" style="width: 18px; height: 18px;"></i>
-                                Ask AI
-                            </button>
-                        </div>
-                        <div style="text-align: center; margin-top: 12px;">
-                            <span style="font-size: 0.875rem; color: var(--text-muted);">
-                                <i data-lucide="zap" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; color: var(--chika-accent);"></i>
-                                Live demo • Real AIs • Instant response
-                            </span>
-                        </div>
+                    <div style="display: flex; gap: 12px; align-items: stretch;">
+                        <input 
+                            type="text" 
+                            id="hero-prompt-input"
+                            placeholder="Ask anything... Try: 'Explain quantum computing'"
+                            style="flex: 1; background: var(--bg-card); border: 2px solid rgba(99, 102, 241, 0.2); border-radius: 12px; padding: 16px 20px; color: var(--text-primary); font-size: 1rem; transition: all 0.2s;"
+                            onfocus="this.style.borderColor='var(--chika-primary)'; this.style.boxShadow='0 0 0 3px rgba(99, 102, 241, 0.1)'"
+                            onblur="this.style.borderColor='rgba(99, 102, 241, 0.2)'; this.style.boxShadow='none'"
+                            onkeypress="if(event.key==='Enter') openChatWithPrompt()"
+                        />
+                        <button 
+                            onclick="openChatWithPrompt()" 
+                            class="btn btn-primary"
+                            style="padding: 16px 32px; display: flex; align-items: center; gap: 10px; white-space: nowrap; font-weight: 600; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);"
+                        >
+                            <i data-lucide="sparkles" style="width: 20px; height: 20px;"></i>
+                            Try Now
+                        </button>
+                    </div>
+                    
+                    <!-- Example badges -->
+                    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                        <button onclick="document.getElementById('hero-prompt-input').value='Fun fact about ThinkPad?'; openChatWithPrompt();" style="background: var(--bg-card); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 20px; padding: 8px 16px; color: var(--text-secondary); font-size: 0.875rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--chika-primary)'; this.style.color='var(--chika-primary)'" onmouseout="this.style.borderColor='rgba(99, 102, 241, 0.2)'; this.style.color='var(--text-secondary)'">
+                            💻 ThinkPad facts
+                        </button>
+                        <button onclick="document.getElementById('hero-prompt-input').value='Explain AI in simple terms'; openChatWithPrompt();" style="background: var(--bg-card); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 20px; padding: 8px 16px; color: var(--text-secondary); font-size: 0.875rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--chika-primary)'; this.style.color='var(--chika-primary)'" onmouseout="this.style.borderColor='rgba(99, 102, 241, 0.2)'; this.style.color='var(--text-secondary)'">
+                            🤖 Explain AI
+                        </button>
+                        <button onclick="document.getElementById('hero-prompt-input').value='Best programming language for beginners?'; openChatWithPrompt();" style="background: var(--bg-card); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 20px; padding: 8px 16px; color: var(--text-secondary); font-size: 0.875rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--chika-primary)'; this.style.color='var(--chika-primary)'" onmouseout="this.style.borderColor='rgba(99, 102, 241, 0.2)'; this.style.color='var(--text-secondary)'">
+                            💡 Best language?
+                        </button>
                     </div>
                 </div>
             </div>
