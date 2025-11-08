@@ -4,9 +4,13 @@ Refacto: User → Message → Multi-AI Responses (direct!)
 """
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, EmailStr, validator
 from typing import Optional, List, Dict
 from datetime import datetime
+import json
+import os
+from pathlib import Path
+import resend
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -107,6 +111,18 @@ class ChatResponse(BaseModel):
     intent_analysis: Optional[Dict] = None
 
 
+class WaitlistRequest(BaseModel):
+    """Waitlist signup request"""
+    email: EmailStr
+
+
+class WaitlistResponse(BaseModel):
+    """Waitlist signup response"""
+    success: bool
+    message: str
+    total_signups: int
+
+
 # === Routes === #
 
 @app.get("/")
@@ -143,10 +159,10 @@ async def chat(chat_request: ChatRequest, request: Request):
     NO ROOMS! Direct user → message → multi-AI responses
     """
     try:
-        # User message
+        # User message with BREVITY INJECTION for landing page demo
         user_msg = {
             "role": "user",
-            "content": chat_request.content,
+            "content": f"{chat_request.content}\n\n[SYSTEM: Answer in 2-3 sentences maximum. Be concise and direct.]",
             "timestamp": datetime.now().isoformat()
         }
         
@@ -161,51 +177,66 @@ async def chat(chat_request: ChatRequest, request: Request):
             selected_ais = smart_router.select_ais(chat_request.content, available_ais)
             intent_analysis = None  # SmartRouter does analysis internally
         
-        # Get responses from selected AIs (SEQUENTIAL COLLABORATION!)
-        ai_responses = []
-        conversation_history = [user_msg]  # Build shared context
+        # LANDING PAGE MODE: Show collaboration = ONE synthesized response
+        # Step 1: Collect all AI opinions
+        all_opinions = []
+        conversation_history = [user_msg]
         
         for ai_id in selected_ais:
             try:
-                # Call AI with FULL conversation history (including previous AI responses)
                 response = await llm_router.chat(
                     messages=conversation_history,
                     preferred_provider=ai_id
                 )
+                all_opinions.append({"ai": ai_id, "opinion": response})
                 
-                # Create AI response object
-                ai_response = AIResponse(
-                    ai=ai_id,
-                    content=response,
-                    timestamp=datetime.now().isoformat()
-                )
-                ai_responses.append(ai_response)
-                
-                # ADD THIS AI'S RESPONSE TO HISTORY (so next AI sees it!)
+                # Share response with next AI
                 conversation_history.append({
                     "role": "assistant",
-                    "content": f"[{ai_id.upper()}]: {response}",
-                    "timestamp": datetime.now().isoformat()
+                    "content": f"[{ai_id.upper()}]: {response}"
                 })
-                
             except Exception as e:
-                # If one AI fails, continue with others
                 print(f"❌ {ai_id} failed: {e}")
                 continue
         
-        # If ALL AIs failed, use mock
-        if not ai_responses:
+        # Step 2: If multiple AIs responded, synthesize into ONE answer
+        if len(all_opinions) > 1:
+            # Ask last AI to synthesize all opinions
+            synthesis_prompt = {
+                "role": "user",
+                "content": f"Based on the discussion above, provide ONE concise final answer (2-3 sentences max)."
+            }
+            conversation_history.append(synthesis_prompt)
+            
+            final_response = await llm_router.chat(
+                messages=conversation_history,
+                preferred_provider=all_opinions[-1]["ai"]
+            )
+            
+            # Return SINGLE synthesized response
+            ai_responses = [AIResponse(
+                ai="CHIKA",  # Unified AI collaboration
+                content=final_response,
+                timestamp=datetime.now().isoformat()
+            )]
+        elif len(all_opinions) == 1:
+            # Single AI - return as is
+            ai_responses = [AIResponse(
+                ai=all_opinions[0]["ai"],
+                content=all_opinions[0]["opinion"],
+                timestamp=datetime.now().isoformat()
+            )]
+        else:
+            # Fallback to mock
             mock_response = await llm_router.chat(
                 messages=[user_msg],
                 preferred_provider="mock"
             )
-            
-            ai_responses.append(AIResponse(
+            ai_responses = [AIResponse(
                 ai="mock",
                 content=mock_response,
-                timestamp=datetime.now().isoformat(),
-                reasoning="Fallback: All real AIs unavailable"
-            ))
+                timestamp=datetime.now().isoformat()
+            )]
             selected_ais = ["mock"]
         
         return ChatResponse(
@@ -217,6 +248,162 @@ async def chat(chat_request: ChatRequest, request: Request):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# === WAITLIST STORAGE === #
+WAITLIST_FILE = Path("/tmp/chika_waitlist.json")
+
+def load_waitlist() -> List[Dict]:
+    """Load waitlist from JSON file"""
+    if not WAITLIST_FILE.exists():
+        return []
+    try:
+        with open(WAITLIST_FILE, 'r') as f:
+            return json.load(f)
+    except:
+        return []
+
+def save_waitlist(waitlist: List[Dict]):
+    """Save waitlist to JSON file"""
+    with open(WAITLIST_FILE, 'w') as f:
+        json.dump(waitlist, f, indent=2)
+
+def send_welcome_email(email: str):
+    """Send welcome email to new signup (async, non-blocking)"""
+    try:
+        # Get API key from environment or config
+        api_key = os.getenv('RESEND_API_KEY')
+        
+        if not api_key:
+            print(f"⚠️ RESEND_API_KEY not set. Email not sent to {email}")
+            print(f"   To enable emails: export RESEND_API_KEY='your_key'")
+            return
+        
+        resend.api_key = api_key
+        
+        params = {
+            "from": "CHIKA <onboarding@chika.dev>",  # TODO: Update with your domain
+            "to": [email],
+            "subject": "Welcome to CHIKA Beta! 🚀",
+            "html": f"""
+            <html>
+            <body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #6366f1;">Welcome to CHIKA Beta! 🎉</h2>
+                
+                <p>Hey there!</p>
+                
+                <p>You're officially on the <strong>CHIKA beta waitlist</strong>! We're launching in <strong>December 2025</strong> with limited spots.</p>
+                
+                <h3>What happens next?</h3>
+                <ul>
+                    <li>We'll email you when beta launches (December 2025)</li>
+                    <li>You'll get early access before public release</li>
+                    <li>Special pricing for early testers</li>
+                </ul>
+                
+                <h3>Want to help shape CHIKA?</h3>
+                <p>Reply to this email with feedback, feature requests, or just to say hi! We're building in public and love hearing from early supporters.</p>
+                
+                <p style="margin-top: 40px; color: #666;">
+                    - Pedro, Founder<br>
+                    <a href="https://github.com/ruipedro-pinheiro/CHIKA">Follow us on GitHub</a>
+                </p>
+                
+                <p style="font-size: 12px; color: #999; margin-top: 40px;">
+                    You received this because you signed up on chika.dev. 
+                    <a href="mailto:pedro@chika.dev">Unsubscribe</a>
+                </p>
+            </body>
+            </html>
+            """
+        }
+        
+        email_response = resend.Emails.send(params)
+        print(f"✅ Welcome email sent to {email} (ID: {email_response['id']})")
+        
+    except Exception as e:
+        print(f"❌ Email failed for {email}: {e}")
+
+
+# === WAITLIST ROUTES === #
+
+@app.post("/waitlist", response_model=WaitlistResponse)
+@limiter.limit("5/minute")  # Max 5 signups per minute per IP (anti-spam)
+async def waitlist_signup(signup: WaitlistRequest, request: Request):
+    """
+    Add email to waitlist
+    
+    Features:
+    - Saves to JSON file (data/waitlist.json)
+    - Prevents duplicates
+    - Sends welcome email (TODO)
+    - Rate limited (5/min)
+    """
+    try:
+        email = signup.email.lower()
+        
+        # Load current waitlist
+        waitlist = load_waitlist()
+        
+        # Check if already signed up
+        if any(entry['email'] == email for entry in waitlist):
+            return WaitlistResponse(
+                success=False,
+                message="You're already on the waitlist! 🎉",
+                total_signups=len(waitlist)
+            )
+        
+        # Add new signup
+        new_entry = {
+            "email": email,
+            "timestamp": datetime.now().isoformat(),
+            "ip": get_remote_address(request),
+            "user_agent": request.headers.get("user-agent", "unknown")
+        }
+        waitlist.append(new_entry)
+        
+        # Save to file
+        save_waitlist(waitlist)
+        
+        # Send welcome email (non-blocking)
+        try:
+            send_welcome_email(email)
+        except Exception as e:
+            print(f"⚠️ Email failed: {e}")
+        
+        return WaitlistResponse(
+            success=True,
+            message="Amazing! You're on the list. Check your email for confirmation!",
+            total_signups=len(waitlist)
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/waitlist/count")
+async def waitlist_count():
+    """Get total waitlist signups (public endpoint)"""
+    waitlist = load_waitlist()
+    return {
+        "count": len(waitlist),
+        "timestamp": datetime.now().isoformat()
+    }
+
+
+@app.get("/waitlist/admin")
+async def waitlist_admin():
+    """
+    Admin dashboard - View all signups
+    
+    TODO: Add authentication!
+    """
+    waitlist = load_waitlist()
+    return {
+        "total": len(waitlist),
+        "signups": waitlist,
+        "latest_10": waitlist[-10:] if len(waitlist) > 0 else []
+    }
 
 
 if __name__ == "__main__":
