@@ -1193,6 +1193,48 @@
             transform: translateY(0);
         }
     </style>
+/* Mobile Responsive Fixes */
+@media (max-width: 768px) {
+    /* Typography scaling */
+    h1 { font-size: 1.75rem !important; }
+    h2 { font-size: 1.5rem !important; }
+    h3 { font-size: 1.25rem !important; }
+    
+    /* Container padding */
+    .container { padding: 16px !important; }
+    
+    /* Table responsive */
+    table { font-size: 0.85rem !important; overflow-x: auto; display: block; }
+    th, td { padding: 8px !important; }
+    
+    /* Buttons */
+    button, .btn { padding: 12px 20px !important; font-size: 0.9rem !important; }
+    
+    /* Input fields */
+    input, textarea { font-size: 16px !important; } /* Prevents zoom on iOS */
+    
+    /* Cards */
+    .card, .pricing-card { margin: 16px 0 !important; }
+    
+    /* Chat messages */
+    #hero-messages, #chat-messages { padding: 12px !important; max-height: 60vh !important; }
+    
+    /* Footer columns */
+    footer .columns { flex-direction: column !important; }
+    footer .column { margin-bottom: 24px !important; }
+}
+
+@media (max-width: 480px) {
+    /* Extra small screens */
+    h1 { font-size: 1.5rem !important; }
+    h2 { font-size: 1.25rem !important; }
+    
+    .container { padding: 12px !important; }
+    
+    /* Stack pricing cards */
+    .pricing-cards { flex-direction: column !important; }
+    .pricing-card { width: 100% !important; max-width: 100% !important; }
+}
 </head>
 <body>
     <!-- ==================== PRE-HEADER ==================== -->
@@ -1213,7 +1255,7 @@
             
             <p><strong>Free Demo:</strong> 20 questions per day | No signup required</p>
             <p><strong>Status:</strong> Beta (v0.2) - Free tier live now</p>
-            <p><strong>Coming:</strong> PRO tier (Q1 2026) with unlimited usage</p>
+            <p><strong>Coming:</strong> PRO tier (Q1 2026) with no daily limits</p>
             
             <p><em>This site requires JavaScript to try the live demo.</em></p>
         </div>
@@ -1684,7 +1726,7 @@
                     </div>
                     <h3 style="color: var(--chika-accent); font-size: 1.25rem; margin-bottom: var(--space-md);">First Access</h3>
                     <p style="color: var(--text-secondary);">
-                        Target beta launch: <strong>December 2025</strong>. New features before everyone else. 
+                        Target beta launch: <strong>Q1 2026 (PRO tier)</strong>. New features before everyone else. 
                         Priority support. VIP treatment.
                     </p>
                 </div>
@@ -1810,7 +1852,7 @@
                 <h2>Join the Beta Waitlist</h2>
                 <p>
                     Be among the first to experience true multi-AI collaboration. 
-                    We're launching in <strong>December 2025</strong> with limited beta spots.
+                    We're launching in <strong>beta is LIVE now</strong> with limited beta spots.
                 </p>
                 
                 <form class="waitlist-form" id="waitlist-form">
@@ -1912,7 +1954,7 @@
                     </div>
                     <div class="faq-answer">
                         <p>
-                            Not yet! We're in development targeting December 2025 beta launch. Join the waitlist to access the live demo and test early builds.
+                            YES! Beta is LIVE now at https://chika.page - Free demo: 20 questions/day. Join waitlist for PRO tier (Q1 2026).
                         </p>
                     </div>
                 </div>
@@ -2311,7 +2353,7 @@ async function sendHeroMessage() {
         
         // Check rate limit BEFORE sending
         if (demoSession.queries_remaining <= 0) {
-            addHeroMessage('system', '🚫 Demo limit reached (10 questions). <a href="#waitlist" style="color: #10b981; font-weight: 600;">Join waitlist for unlimited access!</a>');
+            addHeroMessage('system', '🚫 Demo limit reached (20 questions). <a href="#waitlist" style="color: #10b981; font-weight: 600;">Join waitlist for PRO tier access!</a>');
             return;
         }
         
@@ -2409,7 +2451,7 @@ async function sendHeroMessage() {
         // Show rate limit warning if close to limit
         if (data.queries_remaining <= 2 && data.queries_remaining > 0) {
             setTimeout(() => {
-                addHeroMessage('system', `⚠️ Only ${data.queries_remaining} questions left in demo. <a href="#waitlist" style="color: #10b981;">Join waitlist</a> for unlimited!`);
+                addHeroMessage('system', `⚠️ Only ${data.queries_remaining} questions left in demo. <a href="#waitlist" style="color: #10b981;">Join waitlist</a> for PRO tier!`);
             }, 1000);
         }
         
