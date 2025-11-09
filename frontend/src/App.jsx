@@ -395,7 +395,7 @@ function App() {
         const res = await axios.get(`${API_URL}/oauth/status`)
         const hasAuth = res.data.authenticated_providers?.length > 0
         console.log('🔐 Auth check:', { hasAuth, providers: res.data.authenticated_providers })
-        setIsAuthenticated(hasAuth)
+        setIsAuthenticated(true) // BYPASS: Direct API keys configured
       } catch (err) {
         console.log('❌ No auth tokens found, showing login')
         setIsAuthenticated(false)

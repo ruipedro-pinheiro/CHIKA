@@ -64,7 +64,7 @@ class LLMRouter:
         
         if openai_key:
             deployments.append({
-                "name": "gpt",
+                "name": "AI-1",
                 "model": "gpt-4-turbo-preview",
                 "api_key": openai_key,
                 "priority": 2,
@@ -79,7 +79,7 @@ class LLMRouter:
         
         if google_key:
             deployments.append({
-                "name": "gemini",
+                "name": "AI-2",
                 "model": "gemini/gemini-2.0-flash-exp",
                 "api_key": google_key,
                 "priority": 1,
@@ -112,7 +112,7 @@ class LLMRouter:
         
         # MOCK (ALWAYS AVAILABLE - Last fallback)
         deployments.append({
-            "name": "mock",
+            "name": "AI-3",
             "model": "mock-ai",
             "priority": 999,
             "enabled": True,
