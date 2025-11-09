@@ -122,7 +122,7 @@ class DemoSession(Base):
     session_id: Mapped[str] = mapped_column(String(100), unique=True, index=True)
     room_id: Mapped[int] = mapped_column(ForeignKey("rooms.id"))
     query_count: Mapped[int] = mapped_column(Integer, default=0)
-    max_queries: Mapped[int] = mapped_column(Integer, default=10)
+    max_queries: Mapped[int] = mapped_column(Integer, default=20)
     last_query_date: Mapped[str | None] = mapped_column(String(10), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     last_activity: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

@@ -16,8 +16,9 @@ from security.prompt_filter import PromptSecurityFilter
 router = APIRouter(prefix="/demo", tags=["demo"])
 
 # === SAFEGUARDS: Circuit Breakers === #
-MAX_DISCUSSION_ROUNDS = 5  # Hard limit to prevent infinite loops and cost explosion
+MAX_DISCUSSION_ROUNDS = 3  # Free tier: 3 rounds max (cost control)
 CONSENSUS_KEYWORDS = ["CONSENSUS", "AGREE", "AGREED", "FINAL", "CONCLUDED", "COMPLETE"]
+MAX_CONTEXT_LENGTH = 4000  # Character limit per message (cost control)
 DISCUSSION_TIMEOUT_SECONDS = 60  # Future: Force synthesis after timeout
 
 def check_consensus(response_text: str) -> bool:
@@ -50,8 +51,8 @@ class DemoMessage(BaseModel):
     @classmethod
     def validate_content(cls, v: str) -> str:
         # Validation length
-        if not v or len(v) < 1 or len(v) > 5000:
-            raise ValueError("Content must be between 1 and 5000 characters")
+        if not v or len(v) < 1 or len(v) > MAX_CONTEXT_LENGTH:
+            raise ValueError(f"Content must be between 1 and {MAX_CONTEXT_LENGTH} characters")
         
         # SECURITY: Sanitize input
         sanitized, is_safe, error = InputSanitizer.sanitize_message(v)
@@ -110,7 +111,7 @@ def get_or_create_demo_session(
         session_id=new_session_id,
         room_id=room.id,
         query_count=0,
-        max_queries=10,
+        max_queries=20,  # Free tier: 20 queries per day
         ip_address=request.client.host if request.client else None,
         user_agent=request.headers.get("user-agent", "")[:500]
     )
@@ -201,7 +202,8 @@ async def demo_chat(
     available_ais = llm_router.get_available_providers()
     
     # === SHARED CONTEXT SYSTEM (Token-efficient) === #
-    demo_ais = [ai for ai in ['AI-1', 'AI-2', 'AI-3'] if ai in available_ais][:2]
+    # Free tier: Gemini + Mock (cost control - no GPT-4 or Claude)
+    demo_ais = (['gemini', 'mock'] if 'gemini' in available_ais else ['mock'])[:2]
     
     if len(demo_ais) < 2:
         return {"success": False, "message": "Not enough AIs available"}
@@ -435,4 +437,48 @@ async def demo_stats(db: Session = Depends(get_db)):
         "total_sessions": total_sessions,
         "active_sessions": active_sessions,
         "total_queries": total_queries
+    }
+@router.delete("/session/reset")
+async def reset_demo_session(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """
+    Reset demo session - clear all messages but keep session and query count
+    
+    Used when user clicks "Reset conversation" button
+    """
+    
+    # Get session from cookie
+    session_id = request.cookies.get("chika_demo_session")
+    
+    if not session_id:
+        raise HTTPException(status_code=404, detail="No session found")
+    
+    # Find session
+    demo = db.query(DemoSession).filter(DemoSession.session_id == session_id).first()
+    
+    if demo is None or demo.is_expired:
+        raise HTTPException(status_code=404, detail="Session not found or expired")
+    
+    # Get room
+    room = db.query(DBRoom).filter(DBRoom.id == demo.room_id).first()
+    if room is None:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    # Delete all messages in the room
+    db.query(DBMessage).filter(DBMessage.room_id == room.id).delete()
+    
+    # Update last activity
+    demo.last_activity = datetime.utcnow()
+    
+    db.commit()
+    
+    return {
+        "success": True,
+        "message": "Conversation reset",
+        "session_id": demo.session_id,
+        "query_count": demo.query_count,
+        "queries_remaining": demo.queries_remaining,
+        "max_queries": demo.max_queries
     }
